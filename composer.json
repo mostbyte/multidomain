@@ -1,0 +1,36 @@
+{
+    "name": "mostbyte/multidomain",
+    "description": "Mostbyte domain manager",
+    "type": "library",
+    "require": {
+        "illuminate/support": "^9.0",
+        "illuminate/database": "^9.0",
+        "illuminate/http": "^9.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.0",
+        "orchestra/testbench": "^7.0"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Mostbyte\\Multidomain\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Firdavs Ibodullaev",
+            "email": "firdavs3253@gmail.com"
+        },
+        {
+            "name": "Jasur Dustmurodov",
+            "email": "jasur.coder@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable"
+}
