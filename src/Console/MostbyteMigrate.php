@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Symfony\Component\Console\Command\Command as CommandAlias;
 use Throwable;
 
@@ -16,7 +17,7 @@ class MostbyteMigrate extends Command
      *
      * @var string
      */
-    protected $signature = 'mostbyte:migrate {--schema=}';
+    protected $signature = 'mostbyte:migrate {schema}';
 
     /**
      * The console command description.
@@ -32,36 +33,36 @@ class MostbyteMigrate extends Command
      */
     public function handle(): int
     {
-        $schema = $this->option('schema');
+        $schema = $this->argument('schema');
 
         try {
-            $schema = Validator::validate(['schema' => $schema], [
-                'schema' => 'required|string|max:50',
-            ], [
-                'schema.required' => 'The schema is required',
-            ])['schema'];
+
+            $schema = Validator::validate(['schema' => $schema], ['schema' => 'string|max:50'])['schema'];
+
         } catch (Throwable $exception) {
-            $this->error($exception->getMessage());
+
+            $this->components->error($exception->getMessage());
             return CommandAlias::INVALID;
         }
+
+        $exists = DB::table('information_schema.schemata')
+            ->where('schema_name', '=', $schema)
+            ->exists();
+
+        if ($exists) {
+            $this->components->error("Schema \"$schema\" already exists!");
+            return CommandAlias::INVALID;
+        }
+
+        DB::statement("CREATE SCHEMA $schema");
 
         $driver = config('database.default');
         config(["database.connections.$driver.schema" => $schema]);
-
-        $checkQuery = "SELECT schema_name FROM information_schema.schemata WHERE schema_name = '$schema';";
-        $result = DB::select($checkQuery);
-
-        if (!empty($result)) {
-            $this->error("$schema schema are already exists!");
-            return CommandAlias::INVALID;
-        }
-
-        $query = "CREATE SCHEMA $schema";
-        DB::select($query);
+        DB::purge($driver);
 
         Artisan::call('migrate');
 
-        $this->comment('Migrated successfully!');
+        $this->components->info('Migrated successfully!');
         return CommandAlias::SUCCESS;
     }
 }

@@ -31,10 +31,11 @@ class Manager
     public function updateLogConfig(): static
     {
         $subDomain = $this->domainManager->getSubDomain();
+        $date = now()->toDateString();
         config([
-            'logging.channels.single.path' => storage_path("logs/{$subDomain}.log"),
-            'logging.channels.daily.path' => storage_path("logs/{$subDomain}.log"),
-            'logging.channels.daily.emergency' => storage_path("logs/{$subDomain}.log"),
+            'logging.channels.single.path' => storage_path("logs/{$subDomain}/$date.log"),
+            'logging.channels.daily.path' => storage_path("logs/{$subDomain}/$date.log"),
+            'logging.channels.daily.emergency' => storage_path("logs/{$subDomain}/$date.log"),
         ]);
 
         return $this;
