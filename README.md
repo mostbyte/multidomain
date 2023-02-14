@@ -28,8 +28,7 @@ Instead, you may of course manually update your requirement block and run `compo
 ```
 
 ### Usage
-There is a helper `mostbyteDomainManager`, that returns `DomainManager` and you can use all methods which created in it,  
-for example:
+There is a helper `mostbyteDomainManager`, that returns `DomainManager` and you can use all methods which created in it, for example:
 ```php
     $subDomain = mostbyteDomainManager()->getSubDomain();
 ```
