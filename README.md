@@ -16,7 +16,7 @@ An extension for using Laravel in a multi subdomains setting
 To get the latest version of `Mostbyte Multidomain`, simply require the project using [Composer](https://getcomposer.org)
 
 ```bash
-  composer require mostbyte/multidomain
+composer require mostbyte/multidomain
 ```
 Instead, you may of course manually update your requirement block and run `composer update` if you so choose:
 ```json
@@ -32,7 +32,8 @@ There is a helper `mostbyteDomainManager`, that returns `DomainManager` and you 
 ```php
     $subDomain = mostbyteDomainManager()->getSubDomain();
 ```
-
-| Warnings                                                                                                                     |
-|:-----------------------------------------------------------------------------------------------------------------------------|
-| Before using your app with this library, you need to create schemas with name, that equal with subdomain and run migrations! |
+And you can run console command below, which creates a new schema and runs Laravel's migration
+```bash
+php artisan mostbyte:migrate --schema=schemaName
+```
+#### Before using your app with this library, you need to create schemas with name, that equal with subdomain and run migrations!
