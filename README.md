@@ -34,6 +34,6 @@ There is a helper `mostbyteDomainManager`, that returns `DomainManager` and you 
 ```
 And you can run console command below, which creates a new schema and runs Laravel's migration
 ```bash
-php artisan mostbyte:migrate --schema=schemaName
+php artisan mostbyte:migrate schemaName
 ```
 #### Before using your app with this library, you need to create schemas with name, that equal with subdomain and run migrations!
