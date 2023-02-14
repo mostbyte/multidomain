@@ -17,7 +17,7 @@
             "Mostbyte\\Multidomain\\": "src/"
         },
         "files": [
-            "src/helpers.php"
+            "helpers/DomainManagerHelper.php"
         ]
     },
     "autoload-dev": {
