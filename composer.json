@@ -15,7 +15,10 @@
     "autoload": {
         "psr-4": {
             "Mostbyte\\Multidomain\\": "src/"
-        }
+        },
+        "files": [
+            "src/helpers.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
@@ -32,5 +35,12 @@
             "email": "jasur.coder@gmail.com"
         }
     ],
-    "minimum-stability": "stable"
+    "minimum-stability": "stable",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Mostbyte\\Multidomain\\MultidomainServiceProvider"
+            ]
+        }
+    }
 }
