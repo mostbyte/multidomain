@@ -36,4 +36,8 @@ And you can run console command below, which creates a new schema and runs Larav
 ```bash
 php artisan mostbyte:migrate schemaName
 ```
+Also, there is a command that deletes the created schema
+```bash
+php artisan mostbyte:rollback schemaName
+```
 #### Before using your app with this library, you need to create schemas with name, that equal with subdomain and run migrations!
