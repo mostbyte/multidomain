@@ -4,6 +4,7 @@ namespace Mostbyte\Multidomain;
 
 use Illuminate\Support\ServiceProvider;
 use Mostbyte\Multidomain\Console\MostbyteMigrate;
+use Mostbyte\Multidomain\Console\MostbyteRollback;
 use Mostbyte\Multidomain\Managers\Manager;
 
 class MultidomainServiceProvider extends ServiceProvider
@@ -21,6 +22,7 @@ class MultidomainServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 MostbyteMigrate::class,
+                MostbyteRollback::class
             ]);
         }
     }
