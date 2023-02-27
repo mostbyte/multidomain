@@ -54,7 +54,7 @@ class MostbyteRollback extends Command
         $driver = config('database.default');
         config(["database.connections.$driver.schema" => $schema]);
         DB::purge($driver);
-        Artisan::call('php artisan db:wipe');
+        Artisan::call('artisan db:wipe');
 
         DB::statement("DROP SCHEMA $schema");
 
