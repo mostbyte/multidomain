@@ -2,7 +2,7 @@
 
 namespace Tests\Unit;
 
-use Tests\TestCase;
+use MD\Tests\TestCase;
 
 class DomainTest extends TestCase
 {
