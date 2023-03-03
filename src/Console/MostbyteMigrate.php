@@ -17,7 +17,7 @@ class MostbyteMigrate extends Command
      *
      * @var string
      */
-    protected $signature = 'mostbyte:migrate {schema}';
+    protected $signature = 'mostbyte:migrate {schema} {--seed}';
 
     /**
      * The console command description.
