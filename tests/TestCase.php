@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests;
+namespace MD\Tests;
 
 use Illuminate\Http\Request;
 use Mostbyte\Multidomain\Managers\DomainManager;
