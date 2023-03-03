@@ -34,7 +34,7 @@ There is a helper `mostbyteDomainManager`, that returns `DomainManager` and you 
 ```
 And you can run console command below, which creates a new schema and runs Laravel's migration
 ```bash
-php artisan mostbyte:migrate schemaName
+php artisan mostbyte:migrate schemaName --seed
 ```
 Also, there is a command that deletes the created schema
 ```bash
