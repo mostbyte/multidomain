@@ -34,6 +34,7 @@ class MostbyteMigrate extends Command
     public function handle(): int
     {
         $schema = $this->argument('schema');
+        $toSeed = $this->option('seed');
 
         try {
 
@@ -60,7 +61,11 @@ class MostbyteMigrate extends Command
         config(["database.connections.$driver.schema" => $schema]);
         DB::purge($driver);
 
-        Artisan::call('migrate');
+        if ($toSeed) {
+            $this->components->info('Migration and seeding started');
+        }
+
+        Artisan::call($toSeed ? 'migrate --seed' : 'migrate');
 
         $this->components->info('Migrated successfully!');
         return CommandAlias::SUCCESS;
