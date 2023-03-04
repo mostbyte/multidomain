@@ -5,6 +5,7 @@ namespace MD\Tests;
 use Illuminate\Http\Request;
 use Mostbyte\Multidomain\Managers\DomainManager;
 use Mostbyte\Multidomain\Managers\Manager;
+use Mostbyte\Multidomain\MultidomainServiceProvider;
 use Orchestra\Testbench\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
@@ -17,7 +18,7 @@ abstract class TestCase extends BaseTestCase
 
         $this->httpRequest = Request::create('https://messo.warehouse.mostbyte.uz/sads');
 
-        /** @var DomainManager $manager */
+        /** @var DomainManager $domainManager */
         $domainManager = app(DomainManager::class, [
             'request' => $this->httpRequest
         ]);
@@ -26,5 +27,19 @@ abstract class TestCase extends BaseTestCase
         $manager = app(Manager::class, compact('domainManager'));
 
         $manager->updateConfigs();
+    }
+
+    /**
+     * Get package providers.
+     *
+     * @param \Illuminate\Foundation\Application $app
+     *
+     * @return array<int, class-string<\Illuminate\Support\ServiceProvider>>
+     */
+    protected function getPackageProviders($app)
+    {
+        return [
+            MultidomainServiceProvider::class,
+        ];
     }
 }

@@ -26,6 +26,7 @@
     </coverage>
     <php>
         <env name="APP_KEY" value="base64:yX+Ry8bPuV9s4c6cz4Jtk/OJydn8hD8TSq6b2fBBA1w="/>
+        <env name="APP_URL" value="https://warehouse.mostbyte.uz"/>
     </php>
     <testsuites>
         <testsuite name="Test Suite">
