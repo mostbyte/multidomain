@@ -26,8 +26,8 @@ class DomainManager
 
     public function getSubDomain(): string
     {
-//        dd(str_replace('.' . $this->removeSchemeAndPort(), '', $this->getDomain()));
-        return str_replace('.' . $this->removeSchemeAndPort(), '', $this->getDomain());
+        $subdomain = str_replace($this->removeSchemeAndPort(), '', $this->getDomain());
+        return str_ends_with($subdomain, '.') ? substr($subdomain, 0, -1) : $subdomain;
     }
 
     public function getLocale(): string
