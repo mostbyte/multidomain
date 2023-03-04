@@ -10,7 +10,7 @@ An extension for using Laravel in a multi subdomains setting
 
 | Laravel | Package |
 |:--------|:--------|
-| 9.x     | 1.x     |
+| 9.x     | 2.x     |
 
 ### Installation
 To get the latest version of `Mostbyte Multidomain`, simply require the project using [Composer](https://getcomposer.org)
@@ -22,9 +22,15 @@ Instead, you may of course manually update your requirement block and run `compo
 ```json
 {
   "require": {
-    "mostbyte/multidomain": "^1.0"
+    "mostbyte/multidomain": "^2.0"
   }
 }
+```
+
+### Publishing config files
+
+```bash
+php artisan vendor:publish --provider="Mostbyte\Auth\AuthServiceProvider"
 ```
 
 ### Usage
