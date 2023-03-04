@@ -30,7 +30,7 @@ Instead, you may of course manually update your requirement block and run `compo
 ### Publishing config files
 
 ```bash
-php artisan vendor:publish --provider="Mostbyte\Auth\AuthServiceProvider"
+php artisan vendor:publish --provider="Mostbyte\Multidomain\MultidomainServiceProvider"
 ```
 
 ### Usage
