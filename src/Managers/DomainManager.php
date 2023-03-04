@@ -26,7 +26,7 @@ class DomainManager
 
     public function getSubDomain(): string
     {
-        return explode('.', $this->getDomain(), 2)[0];
+        return str_replace($this->removeSchemeAndPort(), '', $this->getDomain());
     }
 
     public function getLocale(): string
@@ -34,4 +34,8 @@ class DomainManager
         return $this->request->getLocale();
     }
 
+    protected function removeSchemeAndPort(): string
+    {
+        return preg_replace('/http:\/\/|https:\/\/|:\d+/', '', config('app.url'));
+    }
 }

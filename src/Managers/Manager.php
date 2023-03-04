@@ -18,11 +18,12 @@ class Manager
 
         return $this;
     }
+
     public function updateDatabaseConfig(): static
     {
 
         $driver = config('database.default');
-        config(["database.connections.$driver.schema" => $this->domainManager->getSubDomain()]);
+        config(["database.connections.$driver.schema" => $this->getScheme()]);
         DB::purge($driver);
 
         return $this;
@@ -30,12 +31,12 @@ class Manager
 
     public function updateLogConfig(): static
     {
-        $subDomain = $this->domainManager->getSubDomain();
         $date = now()->toDateString();
+        $scheme = $this->getScheme();
         config([
-            'logging.channels.single.path' => storage_path("logs/{$subDomain}/$date.log"),
-            'logging.channels.daily.path' => storage_path("logs/{$subDomain}/$date.log"),
-            'logging.channels.daily.emergency' => storage_path("logs/{$subDomain}/$date.log"),
+            'logging.channels.single.path' => storage_path("logs/{$scheme}/$date.log"),
+            'logging.channels.daily.path' => storage_path("logs/{$scheme}/$date.log"),
+            'logging.channels.daily.emergency' => storage_path("logs/{$scheme}/$date.log"),
         ]);
 
         return $this;
@@ -45,11 +46,16 @@ class Manager
     public function updateAppConfig(): static
     {
         config([
-            'app.name' => strtoupper($this->domainManager->getSubDomain()),
+            'app.name' => strtoupper($this->getScheme()),
             'app.url' => $this->domainManager->getFullDomain(),
             'app.locale' => $this->domainManager->getLocale(),
         ]);
 
         return $this;
+    }
+
+    protected function getScheme(): string
+    {
+        return $this->domainManager->getSubDomain() ?: 'public';
     }
 }
