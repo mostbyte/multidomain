@@ -9,8 +9,18 @@ use Mostbyte\Multidomain\Managers\Manager;
 
 class MultidomainServiceProvider extends ServiceProvider
 {
+
+    public function register()
+    {
+        $this->mergeConfigFrom(__DIR__ . "/../config/multidomain.php", "multidomain");
+    }
+
     public function boot()
     {
+        $this->publishes([
+            __DIR__ . "/../config/multidomain.php" => config_path("multidomain.php")
+        ], "config");
+
         /** @var Manager $manager */
         $manager = app(Manager::class);
         $manager->updateConfigs();

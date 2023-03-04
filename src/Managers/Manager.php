@@ -19,9 +19,19 @@ class Manager
         return $this;
     }
 
+    public function updateAppConfig(): static
+    {
+        config([
+            'app.name' => strtoupper($this->getScheme()),
+            'app.url' => $this->domainManager->getFullDomain(),
+            'app.locale' => $this->domainManager->getLocale(),
+        ]);
+
+        return $this;
+    }
+
     public function updateDatabaseConfig(): static
     {
-
         $driver = config('database.default');
         config(["database.connections.$driver.schema" => $this->getScheme()]);
         DB::purge($driver);
@@ -40,21 +50,9 @@ class Manager
         ]);
 
         return $this;
-
     }
 
-    public function updateAppConfig(): static
-    {
-        config([
-            'app.name' => strtoupper($this->getScheme()),
-            'app.url' => $this->domainManager->getFullDomain(),
-            'app.locale' => $this->domainManager->getLocale(),
-        ]);
-
-        return $this;
-    }
-
-    protected function getScheme(): string
+    public function getScheme(): string
     {
         return $this->domainManager->getSubDomain() ?: 'public';
     }
