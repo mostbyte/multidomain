@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
+use Illuminate\Support\Str;
 use Symfony\Component\Console\Command\Command as CommandAlias;
 use Throwable;
 
@@ -33,12 +33,12 @@ class MostbyteMigrate extends Command
      */
     public function handle(): int
     {
-        $schema = $this->argument('schema');
+        $schema = Str::lower($this->argument('schema'));
         $toSeed = $this->option('seed');
 
         try {
 
-            $schema = Validator::validate(['schema' => $schema], ['schema' => 'string|max:50'])['schema'];
+            $schema = Validator::validate(['schema' => $schema], ['schema' => 'string|max:50|alpha'])['schema'];
 
         } catch (Throwable $exception) {
 
