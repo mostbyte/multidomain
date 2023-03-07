@@ -65,7 +65,7 @@ class MostbyteMigrate extends Command
             $this->components->info('Migration and seeding started');
         }
 
-        Artisan::call($toSeed ? 'migrate --seed' : 'migrate');
+        Artisan::call($toSeed ? 'migrate --seed --force' : 'migrate --force');
 
         $this->components->info('Migrated successfully!');
         return CommandAlias::SUCCESS;
