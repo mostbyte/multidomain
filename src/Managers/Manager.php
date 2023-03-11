@@ -14,7 +14,8 @@ class Manager
     {
         $this->updateAppConfig()
             ->updateDatabaseConfig()
-            ->updateLogConfig();
+            ->updateLogConfig()
+            ->updateFilesystemConfig();
 
         return $this;
     }
@@ -22,7 +23,7 @@ class Manager
     public function updateAppConfig(): static
     {
         config([
-            'app.name' => strtoupper($this->getScheme()),
+            'app.name' => strtoupper($this->getSchema()),
             'app.url' => $this->domainManager->getFullDomain(),
             'app.locale' => $this->domainManager->getLocale(),
         ]);
@@ -33,7 +34,7 @@ class Manager
     public function updateDatabaseConfig(): static
     {
         $driver = config('database.default');
-        config(["database.connections.$driver.schema" => $this->getScheme()]);
+        config(["database.connections.$driver.schema" => $this->getSchema()]);
         DB::purge($driver);
 
         return $this;
@@ -42,8 +43,9 @@ class Manager
     public function updateLogConfig(): static
     {
         $date = now()->toDateString();
-        $scheme = $this->getScheme();
+        $scheme = $this->getSchema();
         config([
+            'logging.channels.emergency.path' => storage_path("logs/{$scheme}/$date.log"),
             'logging.channels.single.path' => storage_path("logs/{$scheme}/$date.log"),
             'logging.channels.daily.path' => storage_path("logs/{$scheme}/$date.log"),
             'logging.channels.daily.emergency' => storage_path("logs/{$scheme}/$date.log"),
@@ -52,7 +54,19 @@ class Manager
         return $this;
     }
 
-    public function getScheme(): string
+    public function updateFilesystemConfig($disk = 'public'): static
+    {
+        $url = config("filesystems.disks.$disk.url") . "/" . $this->getSchema();
+        $root = config("filesystems.disks.$disk.root", '') . DIRECTORY_SEPARATOR . $this->getSchema();
+        config([
+            "filesystems.disks.$disk.root" => $root,
+            "filesystems.disks.$disk.url" => $url,
+        ]);
+
+        return $this;
+    }
+
+    public function getSchema(): string
     {
         return $this->domainManager->getSubDomain() ?: 'public';
     }

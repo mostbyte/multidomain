@@ -5,6 +5,7 @@ namespace Mostbyte\Multidomain\Console;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\Console\Command\Command as CommandAlias;
 use Throwable;
@@ -57,6 +58,11 @@ class MostbyteRollback extends Command
         Artisan::call('db:wipe --force');
 
         DB::statement("DROP SCHEMA $schema");
+
+        if (!Storage::deleteDirectory("public/$schema")){
+            $this->components->error("Error when deleting \"$schema\" folder!");
+            return CommandAlias::INVALID;
+        }
 
         $this->components->info('Rollback finished successfully!');
         return CommandAlias::SUCCESS;
