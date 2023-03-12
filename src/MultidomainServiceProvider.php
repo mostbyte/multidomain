@@ -2,9 +2,12 @@
 
 namespace Mostbyte\Multidomain;
 
+use Faker\Factory;
+use Faker\Generator;
 use Illuminate\Support\ServiceProvider;
 use Mostbyte\Multidomain\Console\MostbyteMigrate;
 use Mostbyte\Multidomain\Console\MostbyteRollback;
+use Mostbyte\Multidomain\Fakers\MostbyteImageFaker;
 use Mostbyte\Multidomain\Managers\ConsoleManager;
 use Mostbyte\Multidomain\Managers\Manager;
 
@@ -32,6 +35,12 @@ class MultidomainServiceProvider extends ServiceProvider
     protected function singletons()
     {
         $this->app->singleton(ConsoleManager::class);
+
+        $this->app->singleton(Generator::class, function () {
+            $faker = Factory::create();
+            $faker->addProvider(new MostbyteImageFaker($faker));
+            return $faker;
+        });
     }
 
     protected function registerCommands()
