@@ -57,9 +57,8 @@ class MostbyteMigrate extends Command
 
         DB::statement("CREATE SCHEMA $schema");
 
-        $driver = config('database.default');
-        config(["database.connections.$driver.schema" => $schema]);
-        DB::purge($driver);
+        $this->updateDbConfig($schema);
+        $this->updateFilesystemConfig($schema);
 
         if ($toSeed) {
             $this->components->info('Migration and seeding started');
@@ -69,5 +68,23 @@ class MostbyteMigrate extends Command
 
         $this->components->info('Migrated successfully!');
         return CommandAlias::SUCCESS;
+    }
+
+    protected function updateDbConfig(string $schema)
+    {
+        $driver = config('database.default');
+        config(["database.connections.$driver.schema" => $schema]);
+        DB::purge($driver);
+    }
+
+    protected function updateFilesystemConfig(string $schema, string $disk = 'public')
+    {
+        $url = config('app.url') . "/storage/$schema/";
+        $root = base_path() . "/storage/app/public/" . $schema;
+
+        config([
+            "filesystems.disks.$disk.root" => $root,
+            "filesystems.disks.$disk.url" => $url,
+        ]);
     }
 }
