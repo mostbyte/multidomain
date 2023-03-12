@@ -18,6 +18,6 @@ class MostbyteImageFaker extends Base
             file_get_contents("https://loremflickr.com/$width/$height")
         );
 
-        return "/storage/$schema$name";
+        return "/storage/$schema/$name";
     }
 }
