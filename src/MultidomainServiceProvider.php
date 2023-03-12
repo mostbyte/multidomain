@@ -5,6 +5,7 @@ namespace Mostbyte\Multidomain;
 use Illuminate\Support\ServiceProvider;
 use Mostbyte\Multidomain\Console\MostbyteMigrate;
 use Mostbyte\Multidomain\Console\MostbyteRollback;
+use Mostbyte\Multidomain\Managers\ConsoleManager;
 use Mostbyte\Multidomain\Managers\Manager;
 
 class MultidomainServiceProvider extends ServiceProvider
@@ -25,6 +26,12 @@ class MultidomainServiceProvider extends ServiceProvider
         $manager = app(Manager::class);
         $manager->updateConfigs();
         $this->registerCommands();
+        $this->singletons();
+    }
+
+    protected function singletons()
+    {
+        $this->app->singleton(ConsoleManager::class);
     }
 
     protected function registerCommands()

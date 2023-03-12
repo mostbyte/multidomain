@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Mostbyte\Multidomain\Managers\ConsoleManager;
 use Symfony\Component\Console\Command\Command as CommandAlias;
 use Throwable;
 
@@ -25,6 +26,8 @@ class MostbyteMigrate extends Command
      * @var string
      */
     protected $description = 'This command will create new schema and run migration for it';
+
+    protected string $schema;
 
     /**
      * Execute the console command.
@@ -46,6 +49,8 @@ class MostbyteMigrate extends Command
             return CommandAlias::INVALID;
         }
 
+        $this->schema = $schema;
+
         $exists = DB::table('information_schema.schemata')
             ->where('schema_name', '=', $schema)
             ->exists();
@@ -57,8 +62,9 @@ class MostbyteMigrate extends Command
 
         DB::statement("CREATE SCHEMA $schema");
 
-        $this->updateDbConfig($schema);
-        $this->updateFilesystemConfig($schema);
+        $this->updateDbConfig();
+        $this->updateFilesystemConfig();
+        app(ConsoleManager::class)->setSchema($schema);
 
         if ($toSeed) {
             $this->components->info('Migration and seeding started');
@@ -70,17 +76,17 @@ class MostbyteMigrate extends Command
         return CommandAlias::SUCCESS;
     }
 
-    protected function updateDbConfig(string $schema)
+    protected function updateDbConfig()
     {
         $driver = config('database.default');
-        config(["database.connections.$driver.schema" => $schema]);
+        config(["database.connections.$driver.schema" => $this->schema]);
         DB::purge($driver);
     }
 
-    protected function updateFilesystemConfig(string $schema, string $disk = 'public')
+    protected function updateFilesystemConfig(string $disk = 'public')
     {
-        $url = config('app.url') . "/storage/$schema/";
-        $root = base_path() . "/storage/app/public/" . $schema;
+        $url = config('app.url') . "/storage/$this->schema/";
+        $root = base_path() . "/storage/app/public/" . $this->schema;
 
         config([
             "filesystems.disks.$disk.root" => $root,
