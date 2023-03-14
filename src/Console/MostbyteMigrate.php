@@ -3,7 +3,9 @@
 namespace Mostbyte\Multidomain\Console;
 
 use Illuminate\Console\ConfirmableTrait;
+use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\Console\Migrations\MigrateCommand;
+use Illuminate\Database\Migrations\Migrator;
 use Mostbyte\Multidomain\Services\CommandsService;
 use Symfony\Component\Console\Command\Command as CommandAlias;
 use Throwable;

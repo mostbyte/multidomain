@@ -4,9 +4,13 @@ namespace Mostbyte\Multidomain;
 
 use Faker\Factory;
 use Faker\Generator;
+use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Database\Migrations\Migrator;
 use Illuminate\Support\ServiceProvider;
+use Mostbyte\Multidomain\Console\MostbyteFresh;
 use Mostbyte\Multidomain\Console\MostbyteMigrate;
 use Mostbyte\Multidomain\Console\MostbyteRollback;
+use Mostbyte\Multidomain\Console\MostbyteSchema;
 use Mostbyte\Multidomain\Fakers\MostbyteImageFaker;
 use Mostbyte\Multidomain\Managers\ConsoleManager;
 use Mostbyte\Multidomain\Managers\Manager;
@@ -45,10 +49,19 @@ class MultidomainServiceProvider extends ServiceProvider
 
     protected function registerCommands()
     {
+
+        $this->app->bind(MostbyteMigrate::class, function () {
+            $migrator = app(Migrator::class);
+            $dispatcher = app(Dispatcher::class);
+            return new MostbyteMigrate($migrator, $dispatcher);
+        });
+
         if ($this->app->runningInConsole()) {
             $this->commands([
                 MostbyteMigrate::class,
-                MostbyteRollback::class
+                MostbyteRollback::class,
+                MostbyteFresh::class,
+                MostbyteSchema::class,
             ]);
         }
     }
