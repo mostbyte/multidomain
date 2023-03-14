@@ -2,7 +2,6 @@
 
 namespace Mostbyte\Multidomain\Console;
 
-use Illuminate\Console\ConfirmableTrait;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\Console\Migrations\MigrateCommand;
 use Illuminate\Database\Migrations\Migrator;
@@ -26,6 +25,13 @@ class MostbyteMigrate extends MigrateCommand
                 {--seed : Indicates if the seed task should be re-run}
                 {--seeder= : The class name of the root seeder}
                 {--step : Force the migrations to be run so they can be rolled back individually}';
+
+    public function __construct()
+    {
+        $migrator = app(Migrator::class);
+        $dispatcher = app(Dispatcher::class);
+        parent::__construct($migrator, $dispatcher);
+    }
 
     /**
      * Execute the console command.

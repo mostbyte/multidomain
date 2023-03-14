@@ -49,13 +49,6 @@ class MultidomainServiceProvider extends ServiceProvider
 
     protected function registerCommands()
     {
-
-        $this->app->bind(MostbyteMigrate::class, function () {
-            $migrator = app(Migrator::class);
-            $dispatcher = app(Dispatcher::class);
-            return new MostbyteMigrate($migrator, $dispatcher);
-        });
-
         if ($this->app->runningInConsole()) {
             $this->commands([
                 MostbyteMigrate::class,
