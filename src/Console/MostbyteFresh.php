@@ -12,7 +12,13 @@ class MostbyteFresh extends FreshCommand
 {
     use ConfirmableTrait;
 
-    protected $name = 'mostbyte:fresh {schema}';
+    protected $signature = 'mostbyte:fresh {schema}';
+    /**
+     * The console command name.
+     *
+     * @var string
+     */
+    protected $name = 'mostbyte:fresh';
 
     public function handle(): int
     {
