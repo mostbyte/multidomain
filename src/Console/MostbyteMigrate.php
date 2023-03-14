@@ -2,36 +2,24 @@
 
 namespace Mostbyte\Multidomain\Console;
 
-use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Database\Console\Migrations\MigrateCommand;
-use Illuminate\Database\Migrations\Migrator;
+use Illuminate\Console\Command;
 use Mostbyte\Multidomain\Services\CommandsService;
 use Symfony\Component\Console\Command\Command as CommandAlias;
 use Throwable;
 
-class MostbyteMigrate extends MigrateCommand
+class MostbyteMigrate extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'mostbyte:migrate {schema} {--database= : The database connection to use}
+    protected $signature = 'mostbyte:migrate {schema}
                 {--force : Force the operation to run when in production}
-                {--path=* : The path(s) to the migrations files to be executed}
                 {--realpath : Indicate any provided migration file paths are pre-resolved absolute paths}
-                {--schema-path= : The path to a schema dump file}
                 {--pretend : Dump the SQL queries that would be run}
                 {--seed : Indicates if the seed task should be re-run}
-                {--seeder= : The class name of the root seeder}
                 {--step : Force the migrations to be run so they can be rolled back individually}';
-
-    public function __construct()
-    {
-        $migrator = app(Migrator::class);
-        $dispatcher = app(Dispatcher::class);
-        parent::__construct($migrator, $dispatcher);
-    }
 
     /**
      * Execute the console command.
@@ -50,6 +38,14 @@ class MostbyteMigrate extends MigrateCommand
             return CommandAlias::INVALID;
         }
 
-        return parent::handle();
+        $this->components->task('Migrating tables', fn () => $this->callSilent('migrate', array_filter([
+                '--seed' => $this->option('seed'),
+                '--realpath' => $this->option('realpath'),
+                '--pretend' => $this->option('pretend'),
+                '--step' => $this->option('seed'),
+                '--force' => $this->option('force'),
+            ])) == 0);
+
+        return CommandAlias::SUCCESS;
     }
 }
