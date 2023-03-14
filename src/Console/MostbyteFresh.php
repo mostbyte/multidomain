@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Console\ConfirmableTrait;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\Events\DatabaseRefreshed;
+use Illuminate\Support\Facades\Storage;
 use Mostbyte\Multidomain\Services\CommandsService;
 use Symfony\Component\Console\Command\Command as CommandAlias;
 use Symfony\Component\Console\Input\InputOption;
@@ -15,7 +16,9 @@ class MostbyteFresh extends Command
 {
     use ConfirmableTrait;
 
-    protected $signature = 'mostbyte:fresh {schema}';
+    protected $signature = 'mostbyte:fresh {schema}
+        {--drop-views} {--drop-types} {--path} {--realpath} {--schema-path} {--seed} {--seeder=} {--step}
+    ';
 
     public function handle(): int
     {
@@ -23,9 +26,14 @@ class MostbyteFresh extends Command
         $commandService = app(CommandsService::class);
 
         try {
-            $commandService->execute($this->argument('schema'));
+            $schema = $commandService->execute($this->argument('schema'));
         } catch (Throwable $exception) {
             $this->components->error($exception->getMessage());
+            return CommandAlias::INVALID;
+        }
+
+        if (!Storage::deleteDirectory("public/$schema")){
+            $this->components->error("Error when deleting \"$schema\" folder!");
             return CommandAlias::INVALID;
         }
 
