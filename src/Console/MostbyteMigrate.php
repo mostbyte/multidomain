@@ -46,6 +46,8 @@ class MostbyteMigrate extends Command
                 '--force' => $this->option('force'),
             ])) == 0);
 
+        shell_exec("chown -R www-data:www-data ./storage");
+
         return CommandAlias::SUCCESS;
     }
 }
