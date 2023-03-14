@@ -43,14 +43,32 @@ There is a helper `mostbyteDomainManager`, that returns `DomainManager` and you 
 $subDomain = mostbyteDomainManager()->getSubDomain();
 ```
 
-And you can run console command below, which creates a new schema and runs Laravel's migration
-
+### Console Commands Documentation
+1) First of all you need to create new schema with command below
 ```bash
-php artisan mostbyte:migrate schemaName --seed
+php artisan mostbyte:schema {schema}
 ```
 
-Also, there is a command that deletes the created schema
+2) Then you can run migration with following command and with all flags which exists in default Laravel ```migrate``` command
 
 ```bash
-php artisan mostbyte:rollback schemaName
+php mostbyte:migrate {schema}
+                {--force : Force the operation to run when in production}
+                {--realpath : Indicate any provided migration file paths are pre-resolved absolute paths}
+                {--pretend : Dump the SQL queries that would be run}
+                {--seed : Indicates if the seed task should be re-run}
+                {--step : Force the migrations to be run so they can be rolled back individually}
+```
+
+3) Or there is the command for refreshing database
+```bash
+php mostbyte:fresh {schema}
+        {--realpath : Indicate any provided migration file paths are pre-resolved absolute paths}
+        {--seed : Indicates if the seed task should be re-run}
+        {--step : Force the migrations to be run so they can be rolled back individually}
+```
+
+4) If you want to ***DELETE*** the schema ***with all data in***, run this command
+```bash
+php artisan mostbyte:rollback {schema}
 ```
