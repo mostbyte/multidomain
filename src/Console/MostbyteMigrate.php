@@ -38,7 +38,7 @@ class MostbyteMigrate extends Command
             return CommandAlias::INVALID;
         }
 
-        $this->components->task('Migrating tables', fn () => $this->callSilent('migrate', array_filter([
+        $this->components->task('Migrating tables', fn () => $this->call('migrate', array_filter([
                 '--seed' => $this->option('seed'),
                 '--realpath' => $this->option('realpath'),
                 '--pretend' => $this->option('pretend'),

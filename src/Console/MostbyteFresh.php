@@ -22,6 +22,10 @@ class MostbyteFresh extends Command
 
     public function handle(): int
     {
+        if (!$this->confirmToProceed()) {
+            return CommandAlias::FAILURE;
+        }
+
         /** @var CommandsService $commandService */
         $commandService = app(CommandsService::class);
 

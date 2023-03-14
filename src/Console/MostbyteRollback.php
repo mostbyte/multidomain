@@ -66,6 +66,8 @@ class MostbyteRollback extends Command
             return CommandAlias::INVALID;
         }
 
+        $this->newLine();
+
         $this->components->info('Rollback finished successfully!');
         return CommandAlias::SUCCESS;
     }
