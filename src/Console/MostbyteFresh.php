@@ -2,18 +2,20 @@
 
 namespace Mostbyte\Multidomain\Console;
 
+use Illuminate\Console\Command;
 use Illuminate\Console\ConfirmableTrait;
-use Illuminate\Database\Console\Migrations\FreshCommand;
+use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Database\Events\DatabaseRefreshed;
 use Mostbyte\Multidomain\Services\CommandsService;
 use Symfony\Component\Console\Command\Command as CommandAlias;
+use Symfony\Component\Console\Input\InputOption;
 use Throwable;
 
-class MostbyteFresh extends FreshCommand
+class MostbyteFresh extends Command
 {
     use ConfirmableTrait;
 
-    protected $signature = 'mostbyte:fresh {schema}';
-    protected $name = 'mostbyte:fresh {schema}';
+    protected $signature = 'mostbyte:fresh';
 
     public function handle(): int
     {
@@ -27,6 +29,76 @@ class MostbyteFresh extends FreshCommand
             return CommandAlias::INVALID;
         }
 
-        return parent::handle();
+        $this->components->task('Dropping all tables', fn () => $this->callSilent('db:wipe', array_filter([
+                '--drop-views' => $this->option('drop-views'),
+                '--drop-types' => $this->option('drop-types'),
+                '--force' => true,
+            ])) == 0);
+
+        $this->newLine();
+
+        $this->call('migrate', array_filter([
+            '--path' => $this->input->getOption('path'),
+            '--realpath' => $this->input->getOption('realpath'),
+            '--schema-path' => $this->input->getOption('schema-path'),
+            '--force' => true,
+            '--step' => $this->option('step'),
+        ]));
+
+        if ($this->laravel->bound(Dispatcher::class)) {
+            $this->laravel[Dispatcher::class]->dispatch(
+                new DatabaseRefreshed
+            );
+        }
+
+        if ($this->needsSeeding()) {
+            $this->runSeeder();
+        }
+
+        return CommandAlias::SUCCESS;
+    }
+
+    /**
+     * Determine if the developer has requested database seeding.
+     *
+     * @return bool
+     */
+    protected function needsSeeding(): bool
+    {
+        return $this->option('seed') || $this->option('seeder');
+    }
+
+    /**
+     * Run the database seeder command.
+     *
+     * @return void
+     */
+    protected function runSeeder(): void
+    {
+        $this->call('db:seed', array_filter([
+            '--class' => $this->option('seeder') ?: 'Database\\Seeders\\DatabaseSeeder',
+            '--force' => true,
+        ]));
+    }
+
+    /**
+     * Get the console command options.
+     *
+     * @return array
+     */
+    protected function getOptions(): array
+    {
+        return [
+            ['database', null, InputOption::VALUE_OPTIONAL, 'The database connection to use'],
+            ['drop-views', null, InputOption::VALUE_NONE, 'Drop all tables and views'],
+            ['drop-types', null, InputOption::VALUE_NONE, 'Drop all tables and types (Postgres only)'],
+            ['force', null, InputOption::VALUE_NONE, 'Force the operation to run when in production'],
+            ['path', null, InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'The path(s) to the migrations files to be executed'],
+            ['realpath', null, InputOption::VALUE_NONE, 'Indicate any provided migration file paths are pre-resolved absolute paths'],
+            ['schema-path', null, InputOption::VALUE_OPTIONAL, 'The path to a schema dump file'],
+            ['seed', null, InputOption::VALUE_NONE, 'Indicates if the seed task should be re-run'],
+            ['seeder', null, InputOption::VALUE_OPTIONAL, 'The class name of the root seeder'],
+            ['step', null, InputOption::VALUE_NONE, 'Force the migrations to be run so they can be rolled back individually'],
+        ];
     }
 }
