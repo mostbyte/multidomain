@@ -15,7 +15,7 @@ class MostbyteFresh extends Command
 {
     use ConfirmableTrait;
 
-    protected $signature = 'mostbyte:fresh';
+    protected $signature = 'mostbyte:fresh {schema}';
 
     public function handle(): int
     {
