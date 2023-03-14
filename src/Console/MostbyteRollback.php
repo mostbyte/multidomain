@@ -3,15 +3,20 @@
 namespace Mostbyte\Multidomain\Console;
 
 use Illuminate\Console\Command;
+use Illuminate\Console\ConfirmableTrait;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Mostbyte\Multidomain\Services\CommandsService;
 use Symfony\Component\Console\Command\Command as CommandAlias;
 use Throwable;
 
 class MostbyteRollback extends Command
 {
+
+    use ConfirmableTrait;
+
     /**
      * The name and signature of the console command.
      *
@@ -33,29 +38,26 @@ class MostbyteRollback extends Command
      */
     public function handle(): int
     {
-        $schema = $this->argument('schema');
-
-        try {
-            $schema = Validator::validate(['schema' => $schema], ['schema' => 'string|max:50'])['schema'];
-        } catch (Throwable $exception) {
-
-            $this->components->error($exception->getMessage());
-            return CommandAlias::INVALID;
+        if (!$this->confirmToProceed()) {
+            return CommandAlias::FAILURE;
         }
 
-        $exists = DB::table('information_schema.schemata')
-            ->where('schema_name', '=', $schema)
-            ->exists();
-
-        if (!$exists) {
-            $this->components->error("Schema \"$schema\" not found!");
+        try {
+            /** @var CommandsService $commandService */
+            $commandService = app(CommandsService::class);
+            $schema = $commandService->execute($this->argument('schema'));
+        } catch (Throwable $exception) {
+            $this->components->error($exception->getMessage());
             return CommandAlias::INVALID;
         }
 
         $driver = config('database.default');
         config(["database.connections.$driver.schema" => $schema]);
         DB::purge($driver);
-        Artisan::call('db:wipe --force');
+
+        $this->components->task('Dropping all tables', fn () => $this->callSilent('db:wipe', array_filter([
+                '--force' => true,
+            ])) == 0);
 
         DB::statement("DROP SCHEMA $schema");
 

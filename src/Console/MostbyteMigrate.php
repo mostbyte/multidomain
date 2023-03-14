@@ -2,32 +2,28 @@
 
 namespace Mostbyte\Multidomain\Console;
 
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
-use Mostbyte\Multidomain\Managers\ConsoleManager;
+use Illuminate\Console\ConfirmableTrait;
+use Illuminate\Database\Console\Migrations\MigrateCommand;
+use Mostbyte\Multidomain\Services\CommandsService;
 use Symfony\Component\Console\Command\Command as CommandAlias;
 use Throwable;
 
-class MostbyteMigrate extends Command
+class MostbyteMigrate extends MigrateCommand
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'mostbyte:migrate {schema} {--seed}';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'This command will create new schema and run migration for it';
-
-    protected string $schema;
+    protected $signature = 'mostbyte:migrate {schema} {--database= : The database connection to use}
+                {--force : Force the operation to run when in production}
+                {--path=* : The path(s) to the migrations files to be executed}
+                {--realpath : Indicate any provided migration file paths are pre-resolved absolute paths}
+                {--schema-path= : The path to a schema dump file}
+                {--pretend : Dump the SQL queries that would be run}
+                {--seed : Indicates if the seed task should be re-run}
+                {--seeder= : The class name of the root seeder}
+                {--step : Force the migrations to be run so they can be rolled back individually}';
 
     /**
      * Execute the console command.
@@ -36,61 +32,16 @@ class MostbyteMigrate extends Command
      */
     public function handle(): int
     {
-        $schema = Str::lower($this->argument('schema'));
-        $toSeed = $this->option('seed');
+        /** @var CommandsService $commandService */
+        $commandService = app(CommandsService::class);
 
         try {
-
-            $schema = Validator::validate(['schema' => $schema], ['schema' => 'string|max:50|alpha'])['schema'];
-
+            $commandService->execute($this->argument('schema'));
         } catch (Throwable $exception) {
-
             $this->components->error($exception->getMessage());
             return CommandAlias::INVALID;
         }
 
-        $this->schema = $schema;
-
-        $exists = DB::table('information_schema.schemata')
-            ->where('schema_name', '=', $schema)
-            ->exists();
-
-        if ($exists) {
-            $this->components->error("Schema \"$schema\" already exists!");
-            return CommandAlias::INVALID;
-        }
-
-        DB::statement("CREATE SCHEMA $schema");
-
-        $this->updateDbConfig();
-        $this->updateFilesystemConfig();
-        app(ConsoleManager::class)->setSchema($schema);
-
-        if ($toSeed) {
-            $this->components->info('Migration and seeding started');
-        }
-
-        Artisan::call($toSeed ? 'migrate --seed --force' : 'migrate --force');
-
-        $this->components->info('Migrated successfully!');
-        return CommandAlias::SUCCESS;
-    }
-
-    protected function updateDbConfig()
-    {
-        $driver = config('database.default');
-        config(["database.connections.$driver.schema" => $this->schema]);
-        DB::purge($driver);
-    }
-
-    protected function updateFilesystemConfig(string $disk = 'public')
-    {
-        $url = config('app.url') . "/storage/$this->schema/";
-        $root = base_path() . "/storage/app/public/" . $this->schema;
-
-        config([
-            "filesystems.disks.$disk.root" => $root,
-            "filesystems.disks.$disk.url" => $url,
-        ]);
+        return parent::handle();
     }
 }
