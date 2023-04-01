@@ -22,7 +22,7 @@ class MostbyteRollback extends Command
      *
      * @var string
      */
-    protected $signature = 'mostbyte:rollback {schema}';
+    protected $signature = 'mostbyte:rollback {schema}  {--force}';
 
     /**
      * The console command description.
