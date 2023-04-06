@@ -10,20 +10,20 @@ class Manager
     {
     }
 
-    public function updateConfigs(): static
+    public function updateConfigs(string $schema = null): static
     {
-        $this->updateAppConfig()
-            ->updateDatabaseConfig()
-            ->updateLogConfig()
-            ->updateFilesystemConfig();
+        $this->updateAppConfig($schema)
+            ->updateDatabaseConfig($schema)
+            ->updateLogConfig($schema)
+            ->updateFilesystemConfig($schema);
 
         return $this;
     }
 
-    public function updateAppConfig(): static
+    public function updateAppConfig(string $schema = null): static
     {
         config([
-            'app.name' => strtoupper($this->getSchema()),
+            'app.name' => strtoupper($schema ?? $this->getSchema()),
             'app.url' => $this->domainManager->getFullDomain(),
             'app.locale' => $this->domainManager->getLocale(),
         ]);
@@ -31,19 +31,19 @@ class Manager
         return $this;
     }
 
-    public function updateDatabaseConfig(): static
+    public function updateDatabaseConfig(string $schema = null): static
     {
         $driver = config('database.default');
-        config(["database.connections.$driver.schema" => $this->getSchema()]);
+        config(["database.connections.$driver.schema" => $schema ?? $this->getSchema()]);
         DB::purge($driver);
 
         return $this;
     }
 
-    public function updateLogConfig(): static
+    public function updateLogConfig(string $schema = null): static
     {
         $date = now()->toDateString();
-        $scheme = $this->getSchema();
+        $scheme = $schema ?? $this->getSchema();
         config([
             'logging.channels.emergency.path' => storage_path("logs/{$scheme}/$date.log"),
             'logging.channels.single.path' => storage_path("logs/{$scheme}/$date.log"),
