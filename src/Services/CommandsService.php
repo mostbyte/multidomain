@@ -13,7 +13,7 @@ class CommandsService
 {
     public function validateSchema(string $schema): string
     {
-        return Validator::validate(['schema' => Str::lower($schema)], ['schema' => 'string|max:50|alpha'])['schema'];
+        return Validator::validate(['schema' => Str::lower($schema)], ['schema' => 'string|max:50|regex:/^[a-zA-Z\-]+$/'])['schema'];
     }
 
     /**
