@@ -59,7 +59,7 @@ class MostbyteRollback extends Command
                 '--force' => true,
             ])) == 0);
 
-        DB::statement("DROP SCHEMA $schema");
+        DB::statement('DROP SCHEMA "'. $schema .'"');
 
         if (!Storage::deleteDirectory("public/$schema")){
             $this->components->error("Error when deleting \"$schema\" folder!");
