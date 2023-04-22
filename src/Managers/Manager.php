@@ -12,6 +12,8 @@ class Manager
 
     public function updateConfigs(string $schema = null): static
     {
+        $schema = $schema ?? $this->getSchema();
+
         $this->updateAppConfig($schema)
             ->updateDatabaseConfig($schema)
             ->updateLogConfig($schema)
