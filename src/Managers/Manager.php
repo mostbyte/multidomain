@@ -10,14 +10,14 @@ class Manager
     {
     }
 
-    public function updateConfigs(string $schema = null): static
+    public function updateConfigs(string $schema = null, string $disk = 'public'): static
     {
         $schema = $schema ?? $this->getSchema();
 
         $this->updateAppConfig($schema)
             ->updateDatabaseConfig($schema)
             ->updateLogConfig($schema)
-            ->updateFilesystemConfig($schema);
+            ->updateFilesystemConfig($disk);
 
         return $this;
     }
