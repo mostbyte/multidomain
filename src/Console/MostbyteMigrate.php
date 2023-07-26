@@ -38,7 +38,7 @@ class MostbyteMigrate extends Command
             return CommandAlias::INVALID;
         }
 
-        $this->components->task('Migrating tables', fn () => $this->call('migrate', array_filter([
+        $this->components->task('Migrating tables', fn() => $this->call('migrate', array_filter([
                 '--seed' => $this->option('seed'),
                 '--realpath' => $this->option('realpath'),
                 '--pretend' => $this->option('pretend'),
@@ -46,7 +46,9 @@ class MostbyteMigrate extends Command
                 '--force' => $this->option('force'),
             ])) == 0);
 
-        shell_exec("chown -R www-data:www-data ./storage");
+        if (PHP_OS_FAMILY !== "Windows") {
+            shell_exec("chown -R www-data:www-data ./storage");
+        }
 
         return CommandAlias::SUCCESS;
     }
