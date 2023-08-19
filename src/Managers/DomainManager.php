@@ -6,18 +6,19 @@ use Illuminate\Http\Request;
 
 class DomainManager
 {
+    protected string $subdomain;
+
     public function __construct(protected Request $request)
     {
     }
 
-    public function getDomain(): string
+    public function setSubdomain(string $subdomain): static
     {
-        return $this->request->host();
-    }
+        $this->subdomain = $subdomain;
 
-    /**
-     * @return string
-     */
+        return $this;
+    }
+    
     public function getFullDomain(): string
     {
         return $this->request->getSchemeAndHttpHost();
@@ -26,17 +27,11 @@ class DomainManager
 
     public function getSubDomain(): string
     {
-        $subdomain = str_replace($this->removeSchemeAndPort(), '', $this->getDomain());
-        return str_ends_with($subdomain, '.') ? substr($subdomain, 0, -1) : $subdomain;
+        return $this->subdomain;
     }
 
     public function getLocale(): string
     {
         return $this->request->getLocale();
-    }
-
-    protected function removeSchemeAndPort(): string
-    {
-        return preg_replace('/http:\/\/|https:\/\/|:\d+/', '', config('multidomain.url'));
     }
 }
