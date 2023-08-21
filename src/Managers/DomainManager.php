@@ -3,6 +3,7 @@
 namespace Mostbyte\Multidomain\Managers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class DomainManager
 {
@@ -27,7 +28,7 @@ class DomainManager
 
     public function getSubDomain(): string
     {
-        return $this->subdomain ?? explode('/', parse_url(request()->url())['path'])[1];
+        return $this->subdomain ?? Str::of(parse_url(request()->url(), PHP_URL_PATH))->trim('/')->explode('/')[0];
     }
 
     public function getLocale(): string
