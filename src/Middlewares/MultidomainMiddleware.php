@@ -18,8 +18,9 @@ class MultidomainMiddleware
     {
         $domain = $request->route('domain');
         $request->route()->forgetParameter('domain');
+
         mostbyteDomainManager()->setSubdomain($domain);
-        mostbyteManager()->updateConfigs();
+        mostbyteManager()->updateConfigs($domain);
 
         return $next($request);
     }

@@ -27,7 +27,7 @@ class DomainManager
 
     public function getSubDomain(): string
     {
-        return $this->subdomain;
+        return $this->subdomain ?? explode('/', parse_url(request()->url())['path'])[1];
     }
 
     public function getLocale(): string
