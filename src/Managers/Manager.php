@@ -17,7 +17,15 @@ class Manager
         $this->updateAppConfig($schema)
             ->updateDatabaseConfig($schema)
             ->updateLogConfig($schema)
-            ->updateFilesystemConfig($disk);
+            ->updateFilesystemConfig($disk)
+            ->updateTelescopeConfig($schema);
+
+        return $this;
+    }
+
+    public function updateTelescopeConfig($schema = null): static
+    {
+        config(['telescope.path' => "$schema/telescope"]);
 
         return $this;
     }

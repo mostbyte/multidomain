@@ -6,6 +6,7 @@ use Faker\Factory;
 use Faker\Generator;
 use Illuminate\Support\ServiceProvider;
 use Mostbyte\Multidomain\Console\MostbyteFresh;
+use Mostbyte\Multidomain\Console\MostbyteInstall;
 use Mostbyte\Multidomain\Console\MostbyteMigrate;
 use Mostbyte\Multidomain\Console\MostbyteRollback;
 use Mostbyte\Multidomain\Console\MostbyteSchema;
@@ -38,6 +39,7 @@ class MultidomainServiceProvider extends ServiceProvider
                 MostbyteRollback::class,
                 MostbyteFresh::class,
                 MostbyteSchema::class,
+                MostbyteInstall::class
             ]);
         }
     }
