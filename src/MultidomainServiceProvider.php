@@ -4,7 +4,7 @@ namespace Mostbyte\Multidomain;
 
 use Faker\Factory;
 use Faker\Generator;
-use Illuminate\Foundation\Support\Providers\RouteServiceProvider;
+use Illuminate\Support\ServiceProvider;
 use Mostbyte\Multidomain\Console\MostbyteFresh;
 use Mostbyte\Multidomain\Console\MostbyteMigrate;
 use Mostbyte\Multidomain\Console\MostbyteRollback;
@@ -12,9 +12,8 @@ use Mostbyte\Multidomain\Console\MostbyteSchema;
 use Mostbyte\Multidomain\Fakers\MostbyteImageFaker;
 use Mostbyte\Multidomain\Managers\ConsoleManager;
 use Mostbyte\Multidomain\Managers\DomainManager;
-use Mostbyte\Multidomain\Middlewares\MultidomainMiddleware;
 
-class MultidomainServiceProvider extends RouteServiceProvider
+class MultidomainServiceProvider extends ServiceProvider
 {
 
     public function register(): void
@@ -29,11 +28,6 @@ class MultidomainServiceProvider extends RouteServiceProvider
             $faker->addProvider(new MostbyteImageFaker($faker));
             return $faker;
         });
-    }
-
-    public function boot(): void
-    {
-        $this->middleware(MultidomainMiddleware::class)->prefix('{domain}');
     }
 
     protected function registerCommands(): void
