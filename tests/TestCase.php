@@ -16,7 +16,7 @@ abstract class TestCase extends BaseTestCase
     {
         parent::setUp();
 
-        $this->httpRequest = Request::create('https://messo.warehouse.mostbyte.uz/sads');
+        $this->httpRequest = Request::create('https://warehouse.mostbyte.uz/messo/sads');
 
         /** @var DomainManager $domainManager */
         $domainManager = app(DomainManager::class, [

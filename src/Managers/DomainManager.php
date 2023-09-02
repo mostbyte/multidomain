@@ -19,7 +19,7 @@ class DomainManager
 
         return $this;
     }
-    
+
     public function getFullDomain(): string
     {
         return $this->request->getSchemeAndHttpHost();
@@ -28,7 +28,10 @@ class DomainManager
 
     public function getSubDomain(): string
     {
-        return $this->subdomain ?? Str::of(parse_url(request()->url(), PHP_URL_PATH))->trim('/')->explode('/')[0];
+        return $this->subdomain ?? Str::of(parse_url(request()->url(), PHP_URL_PATH))
+            ->trim('/')
+            ->explode('/')
+            ->first();
     }
 
     public function getLocale(): string

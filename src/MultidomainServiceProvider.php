@@ -5,6 +5,7 @@ namespace Mostbyte\Multidomain;
 use Faker\Factory;
 use Faker\Generator;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 use Mostbyte\Multidomain\Console\MostbyteFresh;
 use Mostbyte\Multidomain\Console\MostbyteInstall;
 use Mostbyte\Multidomain\Console\MostbyteMigrate;
@@ -29,6 +30,8 @@ class MultidomainServiceProvider extends ServiceProvider
             $faker->addProvider(new MostbyteImageFaker($faker));
             return $faker;
         });
+
+        $this->updateConfigs();
     }
 
     protected function registerCommands(): void
@@ -42,5 +45,16 @@ class MultidomainServiceProvider extends ServiceProvider
                 MostbyteInstall::class
             ]);
         }
+    }
+
+    private function updateConfigs()
+    {
+        $domain = Str::of(parse_url($this->app->make('request')->url(), PHP_URL_PATH))
+            ->trim("/")
+            ->explode("/")
+            ->first();
+
+        mostbyteDomainManager()->setSubdomain($domain);
+        mostbyteManager()->updateConfigs($domain);
     }
 }

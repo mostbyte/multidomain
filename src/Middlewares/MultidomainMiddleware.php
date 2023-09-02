@@ -16,11 +16,7 @@ class MultidomainMiddleware
      */
     public function handle(Request $request, Closure $next): mixed
     {
-        $domain = $request->route('domain');
         $request->route()->forgetParameter('domain');
-
-        mostbyteDomainManager()->setSubdomain($domain);
-        mostbyteManager()->updateConfigs($domain);
 
         return $next($request);
     }
