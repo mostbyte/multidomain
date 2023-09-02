@@ -18,7 +18,8 @@ class Manager
             ->updateDatabaseConfig($schema)
             ->updateLogConfig($schema)
             ->updateFilesystemConfig($disk)
-            ->updateTelescopeConfig($schema);
+            ->updateTelescopeConfig($schema)
+            ->updateScribeConfig($schema);
 
         return $this;
     }
@@ -79,5 +80,13 @@ class Manager
     public function getSchema(): string
     {
         return $this->domainManager->getSubDomain() ?: 'public';
+    }
+
+    private function updateScribeConfig(string $schema): static
+    {
+        $prefixes = config('scribe.routes.match.prefixes.path');
+        config(['scribe.routes.match.prefixes.path' => "$schema/$prefixes"]);
+
+        return $this;
     }
 }
