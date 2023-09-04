@@ -49,6 +49,10 @@ class MultidomainServiceProvider extends ServiceProvider
 
     private function updateConfigs()
     {
+        if ($this->app->runningInConsole()) {
+            return;
+        }
+
         $domain = Str::of(parse_url($this->app->make('request')->url(), PHP_URL_PATH))
             ->trim("/")
             ->explode("/")
