@@ -1,4 +1,6 @@
 [![Laravel](https://img.shields.io/badge/Laravel-9.x-orange.svg?style=flat-square)](http://laravel.com)
+[![Laravel](https://img.shields.io/badge/Laravel-10.x-red.svg?style=flat-square)](http://laravel.com)
+[![Laravel](https://img.shields.io/badge/Laravel-11.x-yellow.svg?style=flat-square)](http://laravel.com)
 [![License](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](https://tldrlegal.com/license/mit-license)
 
 # Multi Domain for Laravel
@@ -8,9 +10,11 @@ An extension for using Laravel in a multi subdomains setting
 
 ### Version Compatibility
 
-| Laravel | Package |
-|:--------|:--------|
-| 9.x     | 2.x     |
+| Laravel | Package              |
+|:--------|:---------------------|
+| 9.x     | 1.x-2.x (deprecated) |
+| 10.x    | 3.x-4.x              |
+| 11.x    | 5.x                  |
 
 ### Installation
 
@@ -25,7 +29,7 @@ Instead, you may of course manually update your requirement block and run `compo
 ```json
 {
   "require": {
-    "mostbyte/multidomain": "^2.0"
+    "mostbyte/multidomain": "^5.0"
   }
 }
 ```
@@ -58,6 +62,7 @@ php mostbyte:migrate {schema}
                 {--pretend : Dump the SQL queries that would be run}
                 {--seed : Indicates if the seed task should be re-run}
                 {--step : Force the migrations to be run so they can be rolled back individually}
+                {--all : Run migrations for all schemas}
 ```
 
 3) Or there is the command for refreshing database
