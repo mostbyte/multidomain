@@ -6,6 +6,9 @@ use Illuminate\Support\Facades\DB;
 
 class Manager
 {
+    protected ?string $defaultDiskRoot = null;
+    protected ?string $defaultDiskUrl = null;
+
     public function __construct(protected DomainManager $domainManager)
     {
     }
@@ -66,8 +69,17 @@ class Manager
 
     public function updateFilesystemConfig($disk = 'public'): static
     {
-        $url = config("filesystems.disks.$disk.url") . "/" . $this->getSchema();
-        $root = config("filesystems.disks.$disk.root", '') . DIRECTORY_SEPARATOR . $this->getSchema();
+        if (! $this->defaultDiskRoot) {
+            $this->defaultDiskRoot = config("filesystems.disks.$disk.root", '');
+        }
+
+        if (! $this->defaultDiskUrl) {
+            $this->defaultDiskUrl = config("filesystems.disks.$disk.url", '');
+        }
+
+        $url = $this->defaultDiskUrl . "/" . $this->getSchema();
+        $root = $this->defaultDiskRoot . DIRECTORY_SEPARATOR . $this->getSchema();
+
         config([
             "filesystems.disks.$disk.root" => $root,
             "filesystems.disks.$disk.url" => $url,
