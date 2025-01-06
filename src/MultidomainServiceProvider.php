@@ -33,12 +33,15 @@ class MultidomainServiceProvider extends ServiceProvider
 
     protected function registerCommands(): void
     {
+        $this->commands([
+            MostbyteMigrate::class,
+            MostbyteRollback::class,
+            MostbyteSchema::class,
+        ]);
+
         if ($this->app->runningInConsole()) {
             $this->commands([
-                MostbyteMigrate::class,
-                MostbyteRollback::class,
                 MostbyteFresh::class,
-                MostbyteSchema::class,
                 MostbyteInstall::class
             ]);
         }
