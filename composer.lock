@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b10938b3e8b5ac906ac810264aad667f",
+    "content-hash": "8b12ad2a2fe40216fd808f8e20aa4558",
     "packages": [
         {
             "name": "brick/math",
@@ -2045,16 +2045,16 @@
         },
         {
             "name": "mostbyte/auth",
-            "version": "3.1.2",
+            "version": "3.1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mostbyte/auth.git",
-                "reference": "d862cbd25fd3d4e91ed117664d9477bc79bc17de"
+                "reference": "dd7bbed8f16e6a1a5ff8e14f2d678e2da73770ca"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mostbyte/auth/zipball/d862cbd25fd3d4e91ed117664d9477bc79bc17de",
-                "reference": "d862cbd25fd3d4e91ed117664d9477bc79bc17de",
+                "url": "https://api.github.com/repos/mostbyte/auth/zipball/dd7bbed8f16e6a1a5ff8e14f2d678e2da73770ca",
+                "reference": "dd7bbed8f16e6a1a5ff8e14f2d678e2da73770ca",
                 "shasum": ""
             },
             "require": {
@@ -2094,9 +2094,9 @@
             "description": "Mostbyte authorization system from identity service",
             "support": {
                 "issues": "https://github.com/mostbyte/auth/issues",
-                "source": "https://github.com/mostbyte/auth/tree/3.1.2"
+                "source": "https://github.com/mostbyte/auth/tree/3.1.3"
             },
-            "time": "2024-07-23T10:32:36+00:00"
+            "time": "2025-02-22T05:11:24+00:00"
         },
         {
             "name": "nesbot/carbon",
