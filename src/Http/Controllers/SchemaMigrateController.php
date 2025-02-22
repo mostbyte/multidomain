@@ -5,6 +5,7 @@ namespace Mostbyte\Multidomain\Http\Controllers;
 use Illuminate\Routing\Controller;
 use Mostbyte\Multidomain\Enums\SchemaMigrateEnum;
 use Mostbyte\Multidomain\Http\Responses\SuccessCommandResponse;
+use Illuminate\Support\Facades\Artisan;
 
 /**
  * @group Система

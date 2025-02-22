@@ -40,7 +40,7 @@ class MultidomainServiceProvider extends ServiceProvider
     {
         Route::group([
             'prefix' => '{domain}/multidomain',
-            'name' => 'mostbyte.multidomain.',
+            'as' => 'mostbyte.multidomain.',
             'middleware' => [
                 MultidomainMiddleware::class,
                 IdentityAuth::class,
