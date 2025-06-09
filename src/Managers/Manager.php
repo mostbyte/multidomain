@@ -15,7 +15,11 @@ class Manager
 
     public function updateConfigs(string $schema = null, string $disk = 'public'): static
     {
-        $schema = $schema ?? $this->getSchema();
+        if ($schema) {
+            $this->domainManager->setSubdomain($schema);
+        }
+
+        $schema = $this->domainManager->getSubDomain();
 
         $this->updateAppConfig($schema)
             ->updateDatabaseConfig($schema)

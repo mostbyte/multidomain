@@ -88,10 +88,6 @@ class MostbyteMigrate extends Command
                 '--force' => $this->option('force'),
             ])) == 0);
 
-        if (PHP_OS_FAMILY !== "Windows") {
-            shell_exec("chown -R www-data:www-data ./storage");
-        }
-
         return CommandAlias::SUCCESS;
     }
 }
