@@ -1,7 +1,7 @@
 <?php
 
-use old\src\Managers\DomainManager;
-use old\src\Managers\Manager;
+use Mostbyte\Multidomain\Managers\DomainManager;
+use Mostbyte\Multidomain\Managers\Manager;
 
 if (!function_exists("mostbyteDomainManager")) {
     function mostbyteDomainManager(): DomainManager
