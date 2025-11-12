@@ -1,85 +1,84 @@
-[![Laravel](https://img.shields.io/badge/Laravel-11.x-yellow.svg?style=flat-square)](http://laravel.com)
-[![License](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](https://tldrlegal.com/license/mit-license)
+# This is my package multidomain
 
-# Multi Domain for Laravel
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/mostbyte/multidomain.svg?style=flat-square)](https://packagist.org/packages/mostbyte/multidomain)
+[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/mostbyte/multidomain/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/mostbyte/multidomain/actions?query=workflow%3Arun-tests+branch%3Amain)
+[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/mostbyte/multidomain/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/mostbyte/multidomain/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
+[![Total Downloads](https://img.shields.io/packagist/dt/mostbyte/multidomain.svg?style=flat-square)](https://packagist.org/packages/mostbyte/multidomain)
 
-An extension for using Laravel in a multi subdomains setting
+This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
 
-## Documentation
+## Support us
 
-### Version Compatibility
+[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/multidomain.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/multidomain)
 
-| Laravel | Package          |
-|:--------|:-----------------|
-| 11.x    | 1.x (actual)     |
-| 11.x    | 5.x (deprecated) |
+We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us).
 
-### Installation
+We highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using. You'll find our address on [our contact page](https://spatie.be/about-us). We publish all received postcards on [our virtual postcard wall](https://spatie.be/open-source/postcards).
 
-To get the latest version of `Mostbyte Multidomain`, simply require the project
-using [Composer](https://getcomposer.org)
+## Installation
+
+You can install the package via composer:
 
 ```bash
 composer require mostbyte/multidomain
 ```
 
-Instead, you may of course manually update your requirement block and run `composer update` if you so choose:
-
-```json
-{
-  "require": {
-    "mostbyte/multidomain": "^1.0"
-  }
-}
-```
-
-### Publishing config files
+You can publish and run the migrations with:
 
 ```bash
-php artisan vendor:publish --provider="Mostbyte\Multidomain\MultidomainServiceProvider"
+php artisan vendor:publish --tag="multidomain-migrations"
+php artisan migrate
 ```
 
-### Usage
+You can publish the config file with:
 
-There is a helper `mostbyteDomainManager`, that returns `DomainManager` and you can use all methods which created in it,
-for example:
+```bash
+php artisan vendor:publish --tag="multidomain-config"
+```
+
+This is the contents of the published config file:
 
 ```php
-$subDomain = mostbyteDomainManager()->getSubDomain();
+return [
+];
 ```
 
-### Console Commands Documentation
-
-1) First of all you need to create new schema with command below
+Optionally, you can publish the views using
 
 ```bash
-php artisan mostbyte:schema {schema}
+php artisan vendor:publish --tag="multidomain-views"
 ```
 
-2) Then you can run migration with following command and with all flags which exists in default Laravel ```migrate```
-   command
+## Usage
+
+```php
+$multidomain = new Mostbyte\Multidomain();
+echo $multidomain->echoPhrase('Hello, Mostbyte!');
+```
+
+## Testing
 
 ```bash
-php mostbyte:migrate {schema}
-                {--force : Force the operation to run when in production}
-                {--realpath : Indicate any provided migration file paths are pre-resolved absolute paths}
-                {--pretend : Dump the SQL queries that would be run}
-                {--seed : Indicates if the seed task should be re-run}
-                {--step : Force the migrations to be run so they can be rolled back individually}
-                {--all : Run migrations for all schemas}
+composer test
 ```
 
-3) Or there is the command for refreshing database
+## Changelog
 
-```bash
-php mostbyte:fresh {schema}
-        {--realpath : Indicate any provided migration file paths are pre-resolved absolute paths}
-        {--seed : Indicates if the seed task should be re-run}
-        {--step : Force the migrations to be run so they can be rolled back individually}
-```
+Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
 
-4) If you want to ***DELETE*** the schema ***with all data in***, run this command
+## Contributing
 
-```bash
-php artisan mostbyte:rollback {schema}
-```
+Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
+
+## Security Vulnerabilities
+
+Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
+
+## Credits
+
+- [Jasur Dustmurodov](https://github.com/dorsone)
+- [All Contributors](../../contributors)
+
+## License
+
+The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
