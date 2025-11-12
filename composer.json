@@ -17,8 +17,10 @@
     ],
     "require": {
         "php": "^8.4",
-        "spatie/laravel-package-tools": "^1.16",
-        "illuminate/contracts": "^11.0||^12.0"
+        "illuminate/contracts": "^11.0||^12.0",
+        "knuckleswtf/scribe": "*",
+        "mostbyte/auth": "*",
+        "spatie/laravel-package-tools": "^1.16"
     },
     "require-dev": {
         "laravel/pint": "^1.14",
@@ -32,7 +34,10 @@
         "psr-4": {
             "Mostbyte\\Multidomain\\": "src/",
             "Mostbyte\\Multidomain\\Database\\Factories\\": "database/factories/"
-        }
+        },
+        "files": [
+            "helpers/DomainManagerHelper.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
