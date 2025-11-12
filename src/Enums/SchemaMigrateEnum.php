@@ -12,7 +12,13 @@ enum SchemaMigrateEnum: string
 
     public function command(): string
     {
-        return sprintf("mostbyte:%s %s", $this->value, mostbyteManager()->getSchema());
+        $command = sprintf("mostbyte:%s %s", $this->value, mostbyteManager()->getSchema());
+
+        if ($this != self::SCHEMA) {
+            $command .= ' --force';
+        }
+
+        return $command;
     }
 
     public function is(array|self $type): bool

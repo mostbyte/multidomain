@@ -1,14 +1,12 @@
 <?php
 
-namespace Mostbyte\Multidomain\Console;
+namespace Mostbyte\Multidomain\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Mostbyte\Multidomain\Services\CommandsService;
-use stdClass;
-use Symfony\Component\Console\Command\Command as CommandAlias;
 use Throwable;
 
 class MostbyteMigrate extends Command
@@ -44,7 +42,7 @@ class MostbyteMigrate extends Command
                 $schema = Validator::validate(['schema' => Str::lower($this->argument('schema'))], ['schema' => 'required|string|max:50|regex:/^[a-zA-Z\-]+$/'])['schema'];
             } catch (Throwable $exception) {
                 $this->components->error($exception->getMessage());
-                return CommandAlias::INVALID;
+                return self::INVALID;
             }
 
             $obj = new class {
@@ -58,13 +56,13 @@ class MostbyteMigrate extends Command
         foreach ($schemas as $schema) {
             $result = $this->migrate($schema->schema_name);
 
-            if ($result != CommandAlias::SUCCESS) {
+            if ($result != self::SUCCESS) {
                 $this->components->error("Can't run migrations for schema {$schema->schema_name}");
-                return CommandAlias::FAILURE;
+                return self::FAILURE;
             }
         }
 
-        return CommandAlias::SUCCESS;
+        return self::SUCCESS;
     }
 
 
@@ -77,7 +75,7 @@ class MostbyteMigrate extends Command
             $commandService->execute($schema);
         } catch (Throwable $exception) {
             $this->components->error($exception->getMessage());
-            return CommandAlias::INVALID;
+            return self::INVALID;
         }
 
         $this->components->task('Migrating tables', fn() => $this->call('migrate', array_filter([
@@ -88,6 +86,6 @@ class MostbyteMigrate extends Command
                 '--force' => $this->option('force'),
             ])) == 0);
 
-        return CommandAlias::SUCCESS;
+        return self::SUCCESS;
     }
 }

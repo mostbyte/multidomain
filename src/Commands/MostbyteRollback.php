@@ -1,15 +1,12 @@
 <?php
 
-namespace Mostbyte\Multidomain\Console;
+namespace Mostbyte\Multidomain\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Console\ConfirmableTrait;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
 use Mostbyte\Multidomain\Services\CommandsService;
-use Symfony\Component\Console\Command\Command as CommandAlias;
 use Throwable;
 
 class MostbyteRollback extends Command
@@ -39,7 +36,7 @@ class MostbyteRollback extends Command
     public function handle(): int
     {
         if (!$this->confirmToProceed()) {
-            return CommandAlias::FAILURE;
+            return self::FAILURE;
         }
 
         try {
@@ -48,7 +45,7 @@ class MostbyteRollback extends Command
             $schema = $commandService->execute($this->argument('schema'));
         } catch (Throwable $exception) {
             $this->components->error($exception->getMessage());
-            return CommandAlias::INVALID;
+            return self::INVALID;
         }
 
         $driver = config('database.default');
@@ -59,16 +56,16 @@ class MostbyteRollback extends Command
                 '--force' => true,
             ])) == 0);
 
-        DB::statement('DROP SCHEMA "'. $schema .'"');
+        DB::statement('DROP SCHEMA "'. $schema .'" CASCADE');
 
         if (!Storage::deleteDirectory("public/$schema")){
-            $this->components->error("Error when deleting \"$schema\" folder!");
-            return CommandAlias::INVALID;
+            $this->components->warn("Error when deleting \"$schema\" folder!");
+            return self::SUCCESS;
         }
 
         $this->newLine();
 
         $this->components->info('Rollback finished successfully!');
-        return CommandAlias::SUCCESS;
+        return self::SUCCESS;
     }
 }

@@ -62,10 +62,10 @@ class Manager
         $date = now()->toDateString();
         $scheme = $schema ?? $this->getSchema();
         config([
-            'logging.channels.emergency.path' => storage_path("logs/{$scheme}/$date.log"),
-            'logging.channels.single.path' => storage_path("logs/{$scheme}/$date.log"),
-            'logging.channels.daily.path' => storage_path("logs/{$scheme}/$date.log"),
-            'logging.channels.daily.emergency' => storage_path("logs/{$scheme}/$date.log"),
+            'logging.channels.emergency.path' => storage_path("logs/$scheme/$date.log"),
+            'logging.channels.single.path' => storage_path("logs/$scheme/$date.log"),
+            'logging.channels.daily.path' => storage_path("logs/$scheme/$date.log"),
+            'logging.channels.daily.emergency' => storage_path("logs/$scheme/$date.log"),
         ]);
 
         return $this;

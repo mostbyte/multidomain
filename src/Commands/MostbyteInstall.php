@@ -1,6 +1,6 @@
 <?php
 
-namespace Mostbyte\Multidomain\Console;
+namespace Mostbyte\Multidomain\Commands;
 
 use Illuminate\Auth\Middleware\Authorize;
 use Illuminate\Console\Command;

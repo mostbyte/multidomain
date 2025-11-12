@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Mostbyte\Multidomain\Managers\ConsoleManager;
-use Symfony\Component\Console\Command\Command as CommandAlias;
 
 class CommandsService
 {

@@ -1,14 +1,13 @@
 <?php
 
-namespace Mostbyte\Multidomain\Console;
+namespace Mostbyte\Multidomain\Commands;
 
+use Illuminate\Bus\Dispatcher;
 use Illuminate\Console\Command;
 use Illuminate\Console\ConfirmableTrait;
-use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\Events\DatabaseRefreshed;
 use Illuminate\Support\Facades\Storage;
 use Mostbyte\Multidomain\Services\CommandsService;
-use Symfony\Component\Console\Command\Command as CommandAlias;
 use Symfony\Component\Console\Input\InputOption;
 use Throwable;
 
@@ -23,7 +22,7 @@ class MostbyteFresh extends Command
     public function handle(): int
     {
         if (!$this->confirmToProceed()) {
-            return CommandAlias::FAILURE;
+            return self::FAILURE;
         }
 
         /** @var CommandsService $commandService */
@@ -33,12 +32,12 @@ class MostbyteFresh extends Command
             $schema = $commandService->execute($this->argument('schema'));
         } catch (Throwable $exception) {
             $this->components->error($exception->getMessage());
-            return CommandAlias::INVALID;
+            return self::INVALID;
         }
 
         if (!Storage::deleteDirectory("public/$schema")){
             $this->components->error("Error when deleting \"$schema\" folder!");
-            return CommandAlias::INVALID;
+            return self::INVALID;
         }
 
         $this->components->task('Dropping all tables', fn () => $this->callSilent('db:wipe', array_filter([
@@ -67,7 +66,7 @@ class MostbyteFresh extends Command
             $this->runSeeder();
         }
 
-        return CommandAlias::SUCCESS;
+        return self::SUCCESS;
     }
 
     /**

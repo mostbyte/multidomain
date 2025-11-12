@@ -1,11 +1,10 @@
 <?php
 
-namespace Mostbyte\Multidomain\Console;
+namespace Mostbyte\Multidomain\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Mostbyte\Multidomain\Services\CommandsService;
-use Symfony\Component\Console\Command\Command as CommandAlias;
 use Throwable;
 
 class MostbyteSchema extends Command
@@ -39,12 +38,12 @@ class MostbyteSchema extends Command
             $commandService->schemaExists($schema);
         } catch (Throwable $exception) {
             $this->components->error($exception->getMessage());
-            return CommandAlias::INVALID;
+            return self::INVALID;
         }
 
         DB::statement('CREATE SCHEMA "'. $schema .'"');
 
         $this->components->info('Schema created successfully!');
-        return CommandAlias::SUCCESS;
+        return self::SUCCESS;
     }
 }
