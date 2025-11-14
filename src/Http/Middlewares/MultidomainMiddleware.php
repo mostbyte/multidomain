@@ -1,6 +1,6 @@
 <?php
 
-namespace Mostbyte\Multidomain\Middlewares;
+namespace Mostbyte\Multidomain\Http\Middlewares;
 
 use Closure;
 use Exception;
