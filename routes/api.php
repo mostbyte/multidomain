@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Mostbyte\Auth\Middleware\IdentityAuth;
 use Mostbyte\Multidomain\Http\Controllers\SchemaMigrateController;
-use Mostbyte\Multidomain\Middlewares\MultidomainMiddleware;
+use Mostbyte\Multidomain\Http\Middlewares\MultidomainMiddleware;
 
 /*
 |--------------------------------------------------------------------------
