@@ -27,15 +27,17 @@ class MultidomainMiddleware
             abort(404, 'Invalid domain format');
         }
 
-        // Check if schema exists in database (with caching)
-        $schemaExists = Cache::remember(
-            key: "domain_schema_exists:$domain",
-            ttl: 3600, // 1 hour
-            callback: fn() => $this->schemaExists($domain)
-        );
+        if ($request->route()->getName() != 'mostbyte.multidomain.type') {
+            // Check if schema exists in database (with caching)
+            $schemaExists = Cache::remember(
+                key: "domain_schema_exists:$domain",
+                ttl: 3600, // 1 hour
+                callback: fn() => $this->schemaExists($domain)
+            );
 
-        if (!$schemaExists) {
-            abort(404, 'Domain not found');
+            if (!$schemaExists) {
+                abort(404, 'Domain not found');
+            }
         }
 
         mostbyteDomainManager()->setSubdomain($domain);
