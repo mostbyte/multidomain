@@ -4,7 +4,7 @@ namespace Mostbyte\Multidomain\Commands;
 
 use Illuminate\Auth\Middleware\Authorize;
 use Illuminate\Console\Command;
-use Mostbyte\Multidomain\Middlewares\MultidomainMiddleware;
+use Mostbyte\Multidomain\Http\Middlewares\MultidomainMiddleware;
 
 class MostbyteInstall extends Command
 {
