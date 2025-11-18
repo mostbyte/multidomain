@@ -9,6 +9,7 @@ use Knuckles\Scribe\Attributes\Group;
 use Knuckles\Scribe\Attributes\UrlParam;
 use Mostbyte\Multidomain\Enums\SchemaMigrateEnum;
 use Mostbyte\Multidomain\Http\Responses\SuccessCommandResponse;
+use Symfony\Component\Console\Command\Command as CommandAlias;
 
 /**
  * Контроллер для запуска миграций схем
@@ -34,7 +35,8 @@ class SchemaMigrateController extends Controller
         try {
             $code = Artisan::call($command);
         } catch (\Throwable $e) {
-            dd($e->getMessage());
+            \Log::error($e->getMessage());
+            $code = CommandAlias::FAILURE;
         }
 
         return new SuccessCommandResponse(
