@@ -13,7 +13,7 @@ class Manager
     {
     }
 
-    public function updateConfigs(string $schema = null, string $disk = 'public'): static
+    public function updateConfigs(?string $schema = null, string $disk = 'public'): static
     {
         if ($schema) {
             $this->domainManager->setSubdomain($schema);
@@ -30,14 +30,14 @@ class Manager
         return $this;
     }
 
-    public function updateTelescopeConfig($schema = null): static
+    public function updateTelescopeConfig(?string $schema = null): static
     {
         config(['telescope.path' => "$schema/telescope"]);
 
         return $this;
     }
 
-    public function updateAppConfig(string $schema = null): static
+    public function updateAppConfig(?string $schema = null): static
     {
         config([
             'app.name' => strtoupper($schema ?? $this->getSchema()),
@@ -48,7 +48,7 @@ class Manager
         return $this;
     }
 
-    public function updateDatabaseConfig(string $schema = null): static
+    public function updateDatabaseConfig(?string $schema = null): static
     {
         $driver = config('database.default');
         config(["database.connections.$driver.schema" => $schema ?? $this->getSchema()]);
@@ -57,7 +57,7 @@ class Manager
         return $this;
     }
 
-    public function updateLogConfig(string $schema = null): static
+    public function updateLogConfig(?string $schema = null): static
     {
         $date = now()->toDateString();
         $scheme = $schema ?? $this->getSchema();
