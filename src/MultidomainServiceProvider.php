@@ -38,6 +38,7 @@ class MultidomainServiceProvider extends PackageServiceProvider
         $this->app->singleton(Generator::class, function () {
             $faker = Factory::create();
             $faker->addProvider(new MostbyteImageFaker($faker));
+
             return $faker;
         });
     }
@@ -61,9 +62,9 @@ class MultidomainServiceProvider extends PackageServiceProvider
 
         if ($driverName && $driverName !== 'pgsql') {
             throw new RuntimeException(
-                "Multidomain requires a PostgreSQL database connection. "
-                . "The [{$driver}] connection uses [{$driverName}]. "
-                . "Please configure a PostgreSQL connection."
+                'Multidomain requires a PostgreSQL database connection. '
+                ."The [{$driver}] connection uses [{$driverName}]. "
+                .'Please configure a PostgreSQL connection.'
             );
         }
     }

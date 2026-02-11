@@ -9,9 +9,7 @@ class DomainManager
 {
     protected string $subdomain;
 
-    public function __construct(protected Request $request)
-    {
-    }
+    public function __construct(protected Request $request) {}
 
     public function setSubdomain(string $subdomain): static
     {
@@ -19,12 +17,11 @@ class DomainManager
 
         return $this;
     }
-    
+
     public function getFullDomain(): string
     {
         return $this->request->getSchemeAndHttpHost();
     }
-
 
     public function getSubDomain(): string
     {

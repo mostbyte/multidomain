@@ -11,7 +11,6 @@ use Throwable;
 
 class MostbyteRollback extends Command
 {
-
     use ConfirmableTrait;
 
     /**
@@ -30,12 +29,10 @@ class MostbyteRollback extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return int
      */
     public function handle(): int
     {
-        if (!$this->confirmToProceed()) {
+        if (! $this->confirmToProceed()) {
             return self::FAILURE;
         }
 
@@ -45,6 +42,7 @@ class MostbyteRollback extends Command
             $schema = $commandService->execute($this->argument('schema'));
         } catch (Throwable $exception) {
             $this->components->error($exception->getMessage());
+
             return self::INVALID;
         }
 
@@ -53,21 +51,23 @@ class MostbyteRollback extends Command
         DB::purge($driver);
 
         $this->components->task('Dropping all tables', fn () => $this->callSilent('db:wipe', array_filter([
-                '--force' => true,
-            ])) == 0);
+            '--force' => true,
+        ])) == 0);
 
-        DB::statement('DROP SCHEMA "'. $schema .'" CASCADE');
+        DB::statement('DROP SCHEMA "'.$schema.'" CASCADE');
 
         CommandsService::invalidateSchemaCache($schema);
 
-        if (!Storage::deleteDirectory("public/$schema")){
+        if (! Storage::deleteDirectory("public/$schema")) {
             $this->components->warn("Error when deleting \"$schema\" folder!");
+
             return self::SUCCESS;
         }
 
         $this->newLine();
 
         $this->components->info('Rollback finished successfully!');
+
         return self::SUCCESS;
     }
 }

@@ -26,8 +26,6 @@ class MostbyteMigrate extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return int
      */
     public function handle(): int
     {
@@ -44,6 +42,7 @@ class MostbyteMigrate extends Command
                         return false;
                     }
                 }
+
                 return true;
             });
         } else {
@@ -54,10 +53,12 @@ class MostbyteMigrate extends Command
                 $schema = Validator::validate(['schema' => Str::lower($this->argument('schema'))], ['schema' => "required|string|max:$maxLength|regex:$regex"])['schema'];
             } catch (Throwable $exception) {
                 $this->components->error($exception->getMessage());
+
                 return self::INVALID;
             }
 
-            $obj = new class {
+            $obj = new class
+            {
                 public string $schema_name;
             };
             $obj->schema_name = $schema;
@@ -70,13 +71,13 @@ class MostbyteMigrate extends Command
 
             if ($result != self::SUCCESS) {
                 $this->components->error("Can't run migrations for schema {$schema->schema_name}");
+
                 return self::FAILURE;
             }
         }
 
         return self::SUCCESS;
     }
-
 
     protected function migrate(string $schema): int
     {
@@ -87,16 +88,17 @@ class MostbyteMigrate extends Command
             $commandService->execute($schema);
         } catch (Throwable $exception) {
             $this->components->error($exception->getMessage());
+
             return self::INVALID;
         }
 
-        $this->components->task('Migrating tables', fn() => $this->call('migrate', array_filter([
-                '--seed' => $this->option('seed'),
-                '--realpath' => $this->option('realpath'),
-                '--pretend' => $this->option('pretend'),
-                '--step' => $this->option('seed'),
-                '--force' => $this->option('force'),
-            ])) == 0);
+        $this->components->task('Migrating tables', fn () => $this->call('migrate', array_filter([
+            '--seed' => $this->option('seed'),
+            '--realpath' => $this->option('realpath'),
+            '--pretend' => $this->option('pretend'),
+            '--step' => $this->option('seed'),
+            '--force' => $this->option('force'),
+        ])) == 0);
 
         return self::SUCCESS;
     }

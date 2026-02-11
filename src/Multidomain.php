@@ -2,13 +2,10 @@
 
 namespace Mostbyte\Multidomain;
 
-use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Mostbyte\Multidomain\Managers\ConsoleManager;
 use Mostbyte\Multidomain\Managers\DomainManager;
 use Mostbyte\Multidomain\Managers\Manager;
-use Mostbyte\Multidomain\Services\CommandsService;
 
 class Multidomain
 {
@@ -23,6 +20,7 @@ class Multidomain
     public function setTenant(string $schema): static
     {
         $this->manager->updateConfigs($schema);
+
         return $this;
     }
 
@@ -73,6 +71,7 @@ class Multidomain
                         return false;
                     }
                 }
+
                 return true;
             })
         ));

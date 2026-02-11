@@ -21,7 +21,7 @@ class MostbyteFresh extends Command
 
     public function handle(): int
     {
-        if (!$this->confirmToProceed()) {
+        if (! $this->confirmToProceed()) {
             return self::FAILURE;
         }
 
@@ -32,19 +32,21 @@ class MostbyteFresh extends Command
             $schema = $commandService->execute($this->argument('schema'));
         } catch (Throwable $exception) {
             $this->components->error($exception->getMessage());
+
             return self::INVALID;
         }
 
-        if (!Storage::deleteDirectory("public/$schema")){
+        if (! Storage::deleteDirectory("public/$schema")) {
             $this->components->error("Error when deleting \"$schema\" folder!");
+
             return self::INVALID;
         }
 
         $this->components->task('Dropping all tables', fn () => $this->callSilent('db:wipe', array_filter([
-                '--drop-views' => $this->option('drop-views'),
-                '--drop-types' => $this->option('drop-types'),
-                '--force' => true,
-            ])) == 0);
+            '--drop-views' => $this->option('drop-views'),
+            '--drop-types' => $this->option('drop-types'),
+            '--force' => true,
+        ])) == 0);
 
         $this->newLine();
 
@@ -67,8 +69,6 @@ class MostbyteFresh extends Command
 
     /**
      * Determine if the developer has requested database seeding.
-     *
-     * @return bool
      */
     protected function needsSeeding(): bool
     {
@@ -77,8 +77,6 @@ class MostbyteFresh extends Command
 
     /**
      * Run the database seeder command.
-     *
-     * @return void
      */
     protected function runSeeder(): void
     {
@@ -90,8 +88,6 @@ class MostbyteFresh extends Command
 
     /**
      * Get the console command options.
-     *
-     * @return array
      */
     protected function getOptions(): array
     {

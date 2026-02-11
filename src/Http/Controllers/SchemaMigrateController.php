@@ -21,10 +21,10 @@ class SchemaMigrateController extends Controller
     #[UrlParam(
         name: 'type',
         type: 'string',
-        description: "Типы команд:<br/>
+        description: 'Типы команд:<br/>
         <b>schema</b> - Создаёт новую схему<br/>
         <b>rollback</b> - Удаляет схему<br/>
-        <b>migrate</b> - Запускает миграции.",
+        <b>migrate</b> - Запускает миграции.',
         required: true,
         example: 'migrate'
     )]

@@ -12,14 +12,14 @@ class MostbyteInstall extends Command
 
     public function handle(): void
     {
-        if (!is_null(config('telescope'))) {
+        if (! is_null(config('telescope'))) {
             config([
-                'telescope.path' => "{domain}/telescope",
+                'telescope.path' => '{domain}/telescope',
                 'telescope.middleware' => [
                     'web',
                     Authorize::class,
-                    MultidomainMiddleware::class
-                ]
+                    MultidomainMiddleware::class,
+                ],
             ]);
         }
     }

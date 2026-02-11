@@ -13,7 +13,7 @@ class MostbyteImageFaker extends Base
     {
         $schema = $schema ?? app(ConsoleManager::class)->getSchema();
 
-        $name = $dir . '/' . Str::random(10) . '.jpg';
+        $name = $dir.'/'.Str::random(10).'.jpg';
         Storage::disk('public')->put($name,
             file_get_contents("https://loremflickr.com/$width/$height")
         );

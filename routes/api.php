@@ -22,8 +22,8 @@ Route::group([
     'middleware' => [
         MultidomainMiddleware::class,
         IdentityAuth::class,
-        'api'
+        'api',
     ],
 ], function () {
-    Route::post("{type}", SchemaMigrateController::class)->name('type');
+    Route::post('{type}', SchemaMigrateController::class)->name('type');
 });

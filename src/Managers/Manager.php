@@ -7,11 +7,10 @@ use Illuminate\Support\Facades\DB;
 class Manager
 {
     protected ?string $defaultDiskRoot = null;
+
     protected ?string $defaultDiskUrl = null;
 
-    public function __construct(protected DomainManager $domainManager)
-    {
-    }
+    public function __construct(protected DomainManager $domainManager) {}
 
     public function updateConfigs(?string $schema = null, ?string $disk = null): static
     {
@@ -82,8 +81,8 @@ class Manager
             $this->defaultDiskUrl = config("filesystems.disks.$disk.url", '');
         }
 
-        $url = $this->defaultDiskUrl . "/" . $this->getSchema();
-        $root = $this->defaultDiskRoot . DIRECTORY_SEPARATOR . $this->getSchema();
+        $url = $this->defaultDiskUrl.'/'.$this->getSchema();
+        $root = $this->defaultDiskRoot.DIRECTORY_SEPARATOR.$this->getSchema();
 
         config([
             "filesystems.disks.$disk.root" => $root,

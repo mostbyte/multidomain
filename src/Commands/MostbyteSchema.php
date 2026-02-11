@@ -25,8 +25,6 @@ class MostbyteSchema extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return int
      */
     public function handle(): int
     {
@@ -38,14 +36,16 @@ class MostbyteSchema extends Command
             $commandService->schemaExists($schema);
         } catch (Throwable $exception) {
             $this->components->error($exception->getMessage());
+
             return self::INVALID;
         }
 
-        DB::statement('CREATE SCHEMA "'. $schema .'"');
+        DB::statement('CREATE SCHEMA "'.$schema.'"');
 
         CommandsService::invalidateSchemaCache($schema);
 
         $this->components->info('Schema created successfully!');
+
         return self::SUCCESS;
     }
 }

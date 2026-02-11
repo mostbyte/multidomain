@@ -12,10 +12,6 @@ class MultidomainMiddleware
 {
     /**
      * Handle an incoming request.
-     *
-     * @param Request $request
-     * @param Closure $next
-     * @return mixed
      */
     public function handle(Request $request, Closure $next): mixed
     {
@@ -24,7 +20,7 @@ class MultidomainMiddleware
 
         $regex = config('multidomain.schema_validation.regex', '/^[a-zA-Z0-9_\-]+$/');
 
-        if (!$domain || !preg_match($regex, $domain)) {
+        if (! $domain || ! preg_match($regex, $domain)) {
             abort(404, 'Invalid domain format');
         }
 
@@ -37,13 +33,13 @@ class MultidomainMiddleware
                 $schemaExists = Cache::remember(
                     key: "{$cachePrefix}:{$domain}",
                     ttl: $cacheTtl,
-                    callback: fn() => $this->schemaExists($domain)
+                    callback: fn () => $this->schemaExists($domain)
                 );
             } else {
                 $schemaExists = $this->schemaExists($domain);
             }
 
-            if (!$schemaExists) {
+            if (! $schemaExists) {
                 abort(404, 'Domain not found');
             }
         }
@@ -56,31 +52,28 @@ class MultidomainMiddleware
 
     /**
      * Check if schema exists in PostgreSQL database
-     *
-     * @param string $domain
-     * @return bool
      */
     protected function schemaExists(string $domain): bool
     {
         try {
             $result = DB::selectOne(
-                "SELECT EXISTS(
+                'SELECT EXISTS(
                     SELECT 1
                     FROM information_schema.schemata
                     WHERE schema_name = ?
-                ) as exists",
+                ) as exists',
                 [$domain]
             );
 
             return (bool) $result->exists;
         } catch (Exception $e) {
             // Log error and return false to deny access
-            logger()->error('Domain validation error: ' . $e->getMessage(), [
+            logger()->error('Domain validation error: '.$e->getMessage(), [
                 'domain' => $domain,
-                'exception' => $e
+                'exception' => $e,
             ]);
+
             return false;
         }
     }
-
 }

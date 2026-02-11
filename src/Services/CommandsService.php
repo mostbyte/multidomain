@@ -31,6 +31,7 @@ class CommandsService
         $this->schemaNotFound($schema);
         $this->updateConfigs($schema);
         app(ConsoleManager::class)->setSchema($schema);
+
         return $schema;
     }
 
@@ -42,7 +43,9 @@ class CommandsService
         $exists = DB::table('information_schema.schemata')
             ->where('schema_name', '=', $schema)
             ->exists();
-        if ($exists) throw new Exception("Schema \"$schema\" already exists!");
+        if ($exists) {
+            throw new Exception("Schema \"$schema\" already exists!");
+        }
     }
 
     /**
@@ -53,7 +56,9 @@ class CommandsService
         $exists = DB::table('information_schema.schemata')
             ->where('schema_name', '=', $schema)
             ->exists();
-        if (!$exists) throw new Exception("Schema \"$schema\" not found!");
+        if (! $exists) {
+            throw new Exception("Schema \"$schema\" not found!");
+        }
     }
 
     public static function invalidateSchemaCache(string $schema): void
@@ -78,8 +83,8 @@ class CommandsService
     protected function updateFilesystemConfig(string $schema, ?string $disk = null): void
     {
         $disk = $disk ?? config('multidomain.filesystem_disk', 'public');
-        $url = config('app.url') . "/storage/$schema/";
-        $root = base_path() . "/storage/app/public/$schema";
+        $url = config('app.url')."/storage/$schema/";
+        $root = base_path()."/storage/app/public/$schema";
 
         config([
             "filesystems.disks.$disk.root" => $root,
