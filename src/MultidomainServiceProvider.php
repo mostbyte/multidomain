@@ -12,6 +12,7 @@ use Mostbyte\Multidomain\Commands\MostbyteSchema;
 use Mostbyte\Multidomain\Fakers\MostbyteImageFaker;
 use Mostbyte\Multidomain\Managers\ConsoleManager;
 use Mostbyte\Multidomain\Managers\DomainManager;
+use RuntimeException;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -21,6 +22,7 @@ class MultidomainServiceProvider extends PackageServiceProvider
     {
         $package
             ->name('multidomain')
+            ->hasConfigFile()
             ->hasRoute('api')
             ->hasCommands([
                 MostbyteMigrate::class,
@@ -38,5 +40,31 @@ class MultidomainServiceProvider extends PackageServiceProvider
             $faker->addProvider(new MostbyteImageFaker($faker));
             return $faker;
         });
+    }
+
+    public function packageBooted(): void
+    {
+        $this->app->resolving(DomainManager::class, function () {
+            static $checked = false;
+            if ($checked) {
+                return;
+            }
+            $checked = true;
+            static::ensurePostgresDriver();
+        });
+    }
+
+    public static function ensurePostgresDriver(): void
+    {
+        $driver = config('multidomain.driver') ?? config('database.default');
+        $driverName = config("database.connections.$driver.driver");
+
+        if ($driverName && $driverName !== 'pgsql') {
+            throw new RuntimeException(
+                "Multidomain requires a PostgreSQL database connection. "
+                . "The [{$driver}] connection uses [{$driverName}]. "
+                . "Please configure a PostgreSQL connection."
+            );
+        }
     }
 }

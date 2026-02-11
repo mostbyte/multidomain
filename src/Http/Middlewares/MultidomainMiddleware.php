@@ -22,18 +22,26 @@ class MultidomainMiddleware
         $domain = $request->route('domain');
         $request->route()->forgetParameter('domain');
 
-        // Validate domain format (allow lowercase letters, numbers, hyphens, and underscores)
-        if (!$domain || !preg_match('/^[a-zA-Z\-]+$/', $domain)) {
+        $regex = config('multidomain.schema_validation.regex', '/^[a-zA-Z0-9_\-]+$/');
+
+        if (!$domain || !preg_match($regex, $domain)) {
             abort(404, 'Invalid domain format');
         }
 
         if ($request->route()->getName() != 'mostbyte.multidomain.type') {
-            // Check if schema exists in database (with caching)
-            $schemaExists = Cache::remember(
-                key: "domain_schema_exists:$domain",
-                ttl: 3600, // 1 hour
-                callback: fn() => $this->schemaExists($domain)
-            );
+            $cacheEnabled = config('multidomain.cache.enabled', true);
+            $cachePrefix = config('multidomain.cache.prefix', 'multidomain_schema_exists');
+            $cacheTtl = config('multidomain.cache.ttl', 3600);
+
+            if ($cacheEnabled) {
+                $schemaExists = Cache::remember(
+                    key: "{$cachePrefix}:{$domain}",
+                    ttl: $cacheTtl,
+                    callback: fn() => $this->schemaExists($domain)
+                );
+            } else {
+                $schemaExists = $this->schemaExists($domain);
+            }
 
             if (!$schemaExists) {
                 abort(404, 'Domain not found');

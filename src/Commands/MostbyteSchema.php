@@ -43,6 +43,8 @@ class MostbyteSchema extends Command
 
         DB::statement('CREATE SCHEMA "'. $schema .'"');
 
+        CommandsService::invalidateSchemaCache($schema);
+
         $this->components->info('Schema created successfully!');
         return self::SUCCESS;
     }

@@ -13,13 +13,14 @@ class Manager
     {
     }
 
-    public function updateConfigs(?string $schema = null, string $disk = 'public'): static
+    public function updateConfigs(?string $schema = null, ?string $disk = null): static
     {
         if ($schema) {
             $this->domainManager->setSubdomain($schema);
         }
 
         $schema = $this->domainManager->getSubDomain();
+        $disk = $disk ?? config('multidomain.filesystem_disk', 'public');
 
         $this->updateAppConfig($schema)
             ->updateDatabaseConfig($schema)
@@ -50,7 +51,7 @@ class Manager
 
     public function updateDatabaseConfig(?string $schema = null): static
     {
-        $driver = config('database.default');
+        $driver = config('multidomain.driver') ?? config('database.default');
         config(["database.connections.$driver.schema" => $schema ?? $this->getSchema()]);
         DB::purge($driver);
 
@@ -94,6 +95,6 @@ class Manager
 
     public function getSchema(): string
     {
-        return $this->domainManager->getSubDomain() ?: 'public';
+        return $this->domainManager->getSubDomain() ?: config('multidomain.default_schema', 'public');
     }
 }

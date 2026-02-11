@@ -32,14 +32,26 @@ class MostbyteMigrate extends Command
     public function handle(): int
     {
         if ($this->option('all')) {
-            $schemas = array_filter(DB::select('SELECT schema_name FROM information_schema.schemata;'), function ($obj) {
-                return !(in_array($obj->schema_name, ['public', 'information_schema']) ||
-                    Str::of($obj->schema_name)->startsWith('pg_'));
+            $excluded = config('multidomain.excluded_schemas', ['public', 'information_schema']);
+            $excludedPrefixes = config('multidomain.excluded_schema_prefixes', ['pg_']);
+
+            $schemas = array_filter(DB::select('SELECT schema_name FROM information_schema.schemata;'), function ($obj) use ($excluded, $excludedPrefixes) {
+                if (in_array($obj->schema_name, $excluded)) {
+                    return false;
+                }
+                foreach ($excludedPrefixes as $prefix) {
+                    if (Str::startsWith($obj->schema_name, $prefix)) {
+                        return false;
+                    }
+                }
+                return true;
             });
         } else {
+            $regex = config('multidomain.schema_validation.regex', '/^[a-zA-Z0-9_\-]+$/');
+            $maxLength = config('multidomain.schema_validation.max_length', 50);
 
             try {
-                $schema = Validator::validate(['schema' => Str::lower($this->argument('schema'))], ['schema' => 'required|string|max:50|regex:/^[a-zA-Z\-]+$/'])['schema'];
+                $schema = Validator::validate(['schema' => Str::lower($this->argument('schema'))], ['schema' => "required|string|max:$maxLength|regex:$regex"])['schema'];
             } catch (Throwable $exception) {
                 $this->components->error($exception->getMessage());
                 return self::INVALID;

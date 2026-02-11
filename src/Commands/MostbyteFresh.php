@@ -2,10 +2,10 @@
 
 namespace Mostbyte\Multidomain\Commands;
 
-use Illuminate\Bus\Dispatcher;
 use Illuminate\Console\Command;
 use Illuminate\Console\ConfirmableTrait;
 use Illuminate\Database\Events\DatabaseRefreshed;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Mostbyte\Multidomain\Services\CommandsService;
 use Symfony\Component\Console\Input\InputOption;
@@ -56,11 +56,7 @@ class MostbyteFresh extends Command
             '--step' => $this->option('step'),
         ]));
 
-        if ($this->laravel->bound(Dispatcher::class)) {
-            $this->laravel[Dispatcher::class]->dispatch(
-                new DatabaseRefreshed
-            );
-        }
+        Event::dispatch(new DatabaseRefreshed);
 
         if ($this->needsSeeding()) {
             $this->runSeeder();

@@ -48,7 +48,7 @@ class MostbyteRollback extends Command
             return self::INVALID;
         }
 
-        $driver = config('database.default');
+        $driver = config('multidomain.driver') ?? config('database.default');
         config(["database.connections.$driver.schema" => $schema]);
         DB::purge($driver);
 
@@ -57,6 +57,8 @@ class MostbyteRollback extends Command
             ])) == 0);
 
         DB::statement('DROP SCHEMA "'. $schema .'" CASCADE');
+
+        CommandsService::invalidateSchemaCache($schema);
 
         if (!Storage::deleteDirectory("public/$schema")){
             $this->components->warn("Error when deleting \"$schema\" folder!");

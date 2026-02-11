@@ -3,6 +3,7 @@
 namespace Mostbyte\Multidomain\Services;
 
 use Exception;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -12,7 +13,13 @@ class CommandsService
 {
     public function validateSchema(string $schema): string
     {
-        return Validator::validate(['schema' => Str::lower($schema)], ['schema' => 'string|max:50|regex:/^[a-zA-Z\-]+$/'])['schema'];
+        $regex = config('multidomain.schema_validation.regex', '/^[a-zA-Z0-9_\-]+$/');
+        $maxLength = config('multidomain.schema_validation.max_length', 50);
+
+        return Validator::validate(
+            ['schema' => Str::lower($schema)],
+            ['schema' => "string|max:$maxLength|regex:$regex"]
+        )['schema'];
     }
 
     /**
@@ -49,6 +56,12 @@ class CommandsService
         if (!$exists) throw new Exception("Schema \"$schema\" not found!");
     }
 
+    public static function invalidateSchemaCache(string $schema): void
+    {
+        $prefix = config('multidomain.cache.prefix', 'multidomain_schema_exists');
+        Cache::forget("{$prefix}:{$schema}");
+    }
+
     public function updateConfigs(string $schema): void
     {
         $this->updateDbConfig($schema);
@@ -57,13 +70,14 @@ class CommandsService
 
     protected function updateDbConfig(string $schema): void
     {
-        $driver = config('database.default');
+        $driver = config('multidomain.driver') ?? config('database.default');
         config(["database.connections.$driver.schema" => $schema]);
         DB::purge($driver);
     }
 
-    protected function updateFilesystemConfig(string $schema, string $disk = 'public'): void
+    protected function updateFilesystemConfig(string $schema, ?string $disk = null): void
     {
+        $disk = $disk ?? config('multidomain.filesystem_disk', 'public');
         $url = config('app.url') . "/storage/$schema/";
         $root = base_path() . "/storage/app/public/$schema";
 
