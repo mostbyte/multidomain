@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Mostbyte\Auth\Middleware\IdentityAuth;
 use Mostbyte\Multidomain\Http\Controllers\SchemaMigrateController;
 use Mostbyte\Multidomain\Http\Middlewares\MultidomainMiddleware;
 
@@ -19,11 +18,10 @@ use Mostbyte\Multidomain\Http\Middlewares\MultidomainMiddleware;
 Route::group([
     'prefix' => '{domain}/multidomain',
     'as' => 'mostbyte.multidomain.',
-    'middleware' => [
+    'middleware' => config('multidomain.middleware', [
         MultidomainMiddleware::class,
-        IdentityAuth::class,
         'api',
-    ],
+    ]),
 ], function () {
     Route::post('{type}', SchemaMigrateController::class)->name('type');
 });

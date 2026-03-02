@@ -98,4 +98,26 @@ return [
 
     'filesystem_disk' => 'public',
 
+    /*
+    |--------------------------------------------------------------------------
+    | Route Middleware
+    |--------------------------------------------------------------------------
+    |
+    | Middleware applied to the multidomain API routes. You can customize this
+    | to add authentication or other middleware as needed.
+    |
+    | Example with authentication:
+    |   'middleware' => [
+    |       \Mostbyte\Multidomain\Http\Middlewares\MultidomainMiddleware::class,
+    |       \Mostbyte\Auth\Middleware\IdentityAuth::class,
+    |       'api',
+    |   ],
+    |
+    */
+
+    'middleware' => [
+        \Mostbyte\Multidomain\Http\Middlewares\MultidomainMiddleware::class,
+        'api',
+    ],
+
 ];
