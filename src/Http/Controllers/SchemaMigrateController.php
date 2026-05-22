@@ -3,12 +3,12 @@
 namespace Mostbyte\Multidomain\Http\Controllers;
 
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Artisan;
 use Knuckles\Scribe\Attributes\Authenticated;
 use Knuckles\Scribe\Attributes\Group;
 use Knuckles\Scribe\Attributes\UrlParam;
 use Mostbyte\Multidomain\Enums\SchemaMigrateEnum;
 use Mostbyte\Multidomain\Http\Responses\SuccessCommandResponse;
-use Symfony\Component\Process\Process;
 
 /**
  * Контроллер для запуска миграций схем
@@ -29,21 +29,16 @@ class SchemaMigrateController extends Controller
     )]
     public function __invoke(SchemaMigrateEnum $type): SuccessCommandResponse
     {
-        $parts = explode(' ', $type->command());
+        // Artisan::call() triggers loadDeferredProviders() which can load heavy providers
+        // (e.g. spatie/laravel-medialibrary's StructureDiscoverer scans all vendor files).
+        // Raise the limit for this request only so it doesn't OOM.
+        ini_set('memory_limit', '1G');
 
-        $process = new Process(
-            array_merge(['php', '-d', 'memory_limit=1G', 'artisan'], $parts),
-            base_path(),
-            null,
-            null,
-            300
-        );
-
-        $process->run();
+        $exitCode = Artisan::call($type->command());
 
         return new SuccessCommandResponse(
-            message: $process->getOutput() ?: $process->getErrorOutput(),
-            status: $process->isSuccessful() ? 0 : 1
+            message: Artisan::output(),
+            status: $exitCode
         );
     }
 }
