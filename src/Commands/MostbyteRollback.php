@@ -47,12 +47,7 @@ class MostbyteRollback extends Command
         }
 
         $driver = config('multidomain.driver') ?? config('database.default');
-        config(["database.connections.$driver.schema" => $schema]);
         DB::purge($driver);
-
-        $this->components->task('Dropping all tables', fn () => $this->callSilent('db:wipe', array_filter([
-            '--force' => true,
-        ])) == 0);
 
         DB::statement('DROP SCHEMA "'.$schema.'" CASCADE');
 
