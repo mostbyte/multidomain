@@ -2,14 +2,13 @@
 
 namespace Mostbyte\Multidomain\Http\Controllers;
 
-use Artisan;
 use Illuminate\Routing\Controller;
 use Knuckles\Scribe\Attributes\Authenticated;
 use Knuckles\Scribe\Attributes\Group;
 use Knuckles\Scribe\Attributes\UrlParam;
 use Mostbyte\Multidomain\Enums\SchemaMigrateEnum;
 use Mostbyte\Multidomain\Http\Responses\SuccessCommandResponse;
-use Symfony\Component\Console\Command\Command as CommandAlias;
+use Symfony\Component\Process\Process;
 
 /**
  * Контроллер для запуска миграций схем
@@ -30,18 +29,21 @@ class SchemaMigrateController extends Controller
     )]
     public function __invoke(SchemaMigrateEnum $type): SuccessCommandResponse
     {
-        $command = $type->command();
+        $parts = explode(' ', $type->command());
 
-        try {
-            $code = Artisan::call($command);
-        } catch (\Throwable $e) {
-            \Log::error($e->getMessage());
-            $code = CommandAlias::FAILURE;
-        }
+        $process = new Process(
+            array_merge(['php', 'artisan'], $parts),
+            base_path(),
+            null,
+            null,
+            300
+        );
+
+        $process->run();
 
         return new SuccessCommandResponse(
-            message: Artisan::output(),
-            status: $code
+            message: $process->getOutput() ?: $process->getErrorOutput(),
+            status: $process->isSuccessful() ? 0 : 1
         );
     }
 }
