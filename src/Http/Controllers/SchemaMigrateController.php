@@ -32,7 +32,7 @@ class SchemaMigrateController extends Controller
         $parts = explode(' ', $type->command());
 
         $process = new Process(
-            array_merge(['php', 'artisan'], $parts),
+            array_merge(['php', '-d', 'memory_limit=1G', 'artisan'], $parts),
             base_path(),
             null,
             null,
