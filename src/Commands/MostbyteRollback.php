@@ -49,7 +49,19 @@ class MostbyteRollback extends Command
         $driver = config('multidomain.driver') ?? config('database.default');
         DB::purge($driver);
 
-        DB::statement('DROP SCHEMA "'.$schema.'" CASCADE');
+        try {
+            // DROP SCHEMA CASCADE requires AccessExclusiveLock on every object in the
+            // schema. Under active traffic each incoming SELECT holds AccessShareLock,
+            // so the DROP blocks indefinitely and the proxy returns 504 after ~4 min.
+            // Set statement_timeout to fail fast with a clear error instead of hanging.
+            DB::unprepared("SET statement_timeout = '30s'");
+            DB::statement('DROP SCHEMA "'.$schema.'" CASCADE');
+        } catch (Throwable $exception) {
+            $this->components->error($exception->getMessage());
+            $this->components->warn('Retry during lower traffic or terminate active connections to this schema first.');
+
+            return self::FAILURE;
+        }
 
         CommandsService::invalidateSchemaCache($schema);
 
