@@ -29,11 +29,6 @@ class SchemaMigrateController extends Controller
     )]
     public function __invoke(SchemaMigrateEnum $type): SuccessCommandResponse
     {
-        // Artisan::call() triggers loadDeferredProviders() which can load heavy providers
-        // (e.g. spatie/laravel-medialibrary's StructureDiscoverer scans all vendor files).
-        // Raise the limit for this request only so it doesn't OOM.
-        ini_set('memory_limit', '1G');
-
         $exitCode = Artisan::call($type->command());
 
         return new SuccessCommandResponse(
