@@ -14,4 +14,12 @@ it('publishes default config', function () {
     expect($config['excluded_schemas'])->toContain('public', 'information_schema');
     expect($config['excluded_schema_prefixes'])->toContain('pg_');
     expect($config['driver'])->toBeNull();
+    expect($config['api_key'])->toBeNull();
+});
+
+it('checks the api key before touching the database', function () {
+    $middleware = config('multidomain.middleware');
+
+    expect($middleware[0])->toBe(\Mostbyte\Multidomain\Http\Middlewares\VerifyApiKeyMiddleware::class);
+    expect($middleware)->toContain(\Mostbyte\Multidomain\Http\Middlewares\MultidomainMiddleware::class);
 });

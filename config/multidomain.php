@@ -100,14 +100,29 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | API Key
+    |--------------------------------------------------------------------------
+    |
+    | Shared secret expected in the X-API-KEY header of every multidomain API
+    | request. The routes create, migrate and drop tenant schemas, so when
+    | this is empty every request is rejected with 403 (fail closed).
+    |
+    */
+
+    'api_key' => env('MULTIDOMAIN_API_KEY'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Route Middleware
     |--------------------------------------------------------------------------
     |
     | Middleware applied to the multidomain API routes. You can customize this
-    | to add authentication or other middleware as needed.
+    | to add authentication or other middleware as needed. Keep the api key
+    | check first so unauthorized requests never reach the database.
     |
     | Example with authentication:
     |   'middleware' => [
+    |       \Mostbyte\Multidomain\Http\Middlewares\VerifyApiKeyMiddleware::class,
     |       \Mostbyte\Multidomain\Http\Middlewares\MultidomainMiddleware::class,
     |       \Mostbyte\Auth\Middleware\IdentityAuth::class,
     |       'api',
@@ -116,6 +131,7 @@ return [
     */
 
     'middleware' => [
+        \Mostbyte\Multidomain\Http\Middlewares\VerifyApiKeyMiddleware::class,
         \Mostbyte\Multidomain\Http\Middlewares\MultidomainMiddleware::class,
         'api',
     ],

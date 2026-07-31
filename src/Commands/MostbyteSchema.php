@@ -33,18 +33,22 @@ class MostbyteSchema extends Command
 
         try {
             $schema = $commandService->validateSchema($this->argument('schema'));
-            $commandService->schemaExists($schema);
+            $alreadyExists = $commandService->exists($schema);
+
+            // Idempotent: re-running provisioning for a known tenant is a no-op,
+            // not a failure.
+            DB::statement('CREATE SCHEMA IF NOT EXISTS "'.$schema.'"');
         } catch (Throwable $exception) {
             $this->components->error($exception->getMessage());
 
             return self::INVALID;
         }
 
-        DB::statement('CREATE SCHEMA "'.$schema.'"');
-
         CommandsService::invalidateSchemaCache($schema);
 
-        $this->components->info('Schema created successfully!');
+        $this->components->info($alreadyExists
+            ? 'Schema already exists, nothing to do.'
+            : 'Schema created successfully!');
 
         return self::SUCCESS;
     }

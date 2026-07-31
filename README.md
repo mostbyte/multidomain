@@ -62,6 +62,47 @@ Multidomain::setTenant('tenant_1');
    ```
 3. All tenant-specific models and queries will automatically be scoped to the active schema.
 
+Creating a schema is idempotent: running `mostbyte:schema` for a tenant whose
+schema already exists reports "Schema already exists, nothing to do." and exits
+with code `0`, so re-running provisioning is safe.
+
+### API authentication
+
+The package routes (`POST /{domain}/multidomain/{type}`) create, migrate and drop
+tenant schemas, so they are protected by a shared secret. Every request must carry
+it in the `X-API-KEY` header:
+
+```bash
+curl -X POST https://example.com/tenant-1/multidomain/schema \
+  -H "X-API-KEY: ${MULTIDOMAIN_API_KEY}"
+```
+
+Set the secret in the consuming application's `.env`:
+
+```dotenv
+MULTIDOMAIN_API_KEY=your-shared-secret
+```
+
+The check runs before any database access and behaves as follows:
+
+| Situation | Response |
+| --- | --- |
+| `MULTIDOMAIN_API_KEY` empty or unset | `403` – fail closed, the routes stay unusable |
+| `X-API-KEY` header missing | `401` |
+| `X-API-KEY` does not match | `403` |
+| `X-API-KEY` matches | request proceeds |
+
+An unconfigured key rejects every request on purpose: leaving the schema drop
+endpoint open is worse than breaking provisioning. Successful requests keep the
+existing response shape (`200` with `{success, status, message}`).
+
+`VerifyApiKeyMiddleware::class` is listed first in the default
+`config('multidomain.middleware')`, but the routes prepend it regardless of what
+that config contains. Overriding the middleware list in a published
+`config/multidomain.php` — for example one copied from an older version of this
+package — cannot disable the api key check or move it behind the tenant
+resolution logic. It is never applied twice if you also list it yourself.
+
 ## Testing
 
 ```bash

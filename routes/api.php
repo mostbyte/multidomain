@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Mostbyte\Multidomain\Http\Controllers\SchemaMigrateController;
 use Mostbyte\Multidomain\Http\Middlewares\MultidomainMiddleware;
+use Mostbyte\Multidomain\Http\Middlewares\VerifyApiKeyMiddleware;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,10 +19,17 @@ use Mostbyte\Multidomain\Http\Middlewares\MultidomainMiddleware;
 Route::group([
     'prefix' => '{domain}/multidomain',
     'as' => 'mostbyte.multidomain.',
-    'middleware' => config('multidomain.middleware', [
-        MultidomainMiddleware::class,
-        'api',
-    ]),
+    // These routes create, migrate and drop tenant schemas, so the api key
+    // check is always prepended: an application that publishes the config and
+    // overrides the middleware list must not be able to drop it silently.
+    'middleware' => array_values(array_unique(array_merge(
+        [VerifyApiKeyMiddleware::class],
+        (array) config('multidomain.middleware', [
+            VerifyApiKeyMiddleware::class,
+            MultidomainMiddleware::class,
+            'api',
+        ])
+    ))),
 ], function () {
     Route::post('{type}', SchemaMigrateController::class)->name('type');
 });

@@ -36,6 +36,16 @@ class CommandsService
     }
 
     /**
+     * Non-throwing counterpart of schemaExists().
+     */
+    public function exists(string $schema): bool
+    {
+        return DB::table('information_schema.schemata')
+            ->where('schema_name', '=', $schema)
+            ->exists();
+    }
+
+    /**
      * @throws Exception
      */
     public function schemaExists(string $schema): void
