@@ -65,7 +65,17 @@ class MostbyteRollback extends Command
 
         CommandsService::invalidateSchemaCache($schema);
 
-        if (! Storage::deleteDirectory("public/$schema")) {
+        // Media cleanup is best-effort: the schema is already gone, so a missing
+        // or unreachable folder must not report the rollback as failed — the
+        // caller would retry a drop that already happened. The S3 driver throws
+        // instead of returning false when the prefix does not exist.
+        try {
+            $deleted = Storage::deleteDirectory("public/$schema");
+        } catch (Throwable $exception) {
+            $deleted = false;
+        }
+
+        if (! $deleted) {
             $this->components->warn("Error when deleting \"$schema\" folder!");
 
             return self::SUCCESS;
